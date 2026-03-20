@@ -1,103 +1,83 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ArrowLeft, User, Mail, Lock, ShieldCheck, Sparkles } from 'lucide-react';
+import { LogIn, ShieldCheck, Mail, Lock, Sparkles, Smile, ArrowRight, Shield } from 'lucide-react';
 import api from '@/lib/api';
+import Link from 'next/link';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    
     try {
       const { data } = await api.post('/auth/login', { email, password });
       localStorage.setItem('posa_token', data.token);
       localStorage.setItem('posa_user', JSON.stringify(data.user));
-      
-      if (data.user.role === 'RECRUITER') router.push('/recruiter/dashboard');
-      else router.push('/candidate/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed.');
+      router.push(data.user.role === 'RECRUITER' ? '/recruiter/dashboard' : '/candidate/dashboard');
+    } catch (err) {
+      alert('Login failed. Please check credentials.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-6 bg-zinc-50/50">
-      <div className="hero-glow opacity-20" />
-      <Link href="/" className="fixed top-12 left-12 flex items-center gap-2 text-sm font-black text-zinc-400 hover:text-indigo-600 transition-colors uppercase tracking-widest">
-        <ArrowLeft className="w-4 h-4" /> Back to Home
-      </Link>
+    <div className="min-h-screen bg-[#020617] text-white flex items-center justify-center p-8 selection:bg-blue-600/30 font-sans relative">
+      <div className="gradient-mesh opacity-20" />
+      <div className="scan-line" />
       
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="glass-card p-12 rounded-[4rem] w-full max-w-md shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] border-white/80 bg-white/90"
-      >
-        <div className="w-16 h-16 rounded-[2rem] bg-indigo-50 border border-indigo-100 flex items-center justify-center mb-8 mx-auto shadow-sm">
-          <ShieldCheck className="text-indigo-600 w-8 h-8" />
+      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="cyber-card p-12 md:p-20 w-full max-w-2xl bg-[#020617]/50 backdrop-blur-3xl border border-white/5 shadow-2xl shadow-black relative z-20">
+        <div className="w-16 h-16 rounded-xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-12 shadow-[0_0_30px_rgba(59,130,246,0.1)]">
+           <Shield size={32} strokeWidth={2.5} />
         </div>
         
-        <h2 className="text-4xl font-[900] text-center mb-2 tracking-tighter">Welcome Back.</h2>
-        <p className="text-center text-zinc-400 text-sm mb-12 font-medium">Step back into your technical DNA.</p>
-        
-        {error && (
-          <div className="bg-rose-50 border border-rose-100 text-rose-600 p-4 rounded-3xl text-xs font-bold mb-8 text-center animate-pulse">
-            {error}
-          </div>
-        )}
+        <div className="mb-20 px-2">
+          <h1 className="text-6xl font-[1000] mb-4 tracking-tighter leading-none glow-text">Access <br/> Protocol.</h1>
+          <p className="text-slate-500 font-bold text-xl tracking-tight">Enter your technical DNA handle.</p>
+        </div>
 
         <form onSubmit={handleLogin} className="space-y-8">
-          <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 pl-4">Email Address</label>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-600 pl-6">Identification</label>
             <div className="relative group">
-              <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+              <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-hover:text-blue-500 transition-colors"><Mail size={18} /></div>
               <input 
-                type="email" required 
-                className="w-full bg-zinc-50 border-zinc-100 rounded-[2rem] py-5 pl-14 pr-6 outline-none focus:ring-4 focus:ring-indigo-100/50 focus:border-indigo-200 transition-all font-bold text-sm"
-                placeholder="you@domain.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="email" placeholder="EMAIL_HANDLE" required 
+                className="w-full bg-slate-900/50 border-white/5 rounded-2xl p-6 pl-14 outline-none font-bold text-2xl tracking-widest text-blue-400 focus:border-blue-500/50 transition-all"
+                value={email} onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>
-          
-          <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 pl-4">Security Phrase</label>
+
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-600 pl-6">Security Phrase</label>
             <div className="relative group">
-              <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+              <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-hover:text-blue-500 transition-colors"><Lock size={18} /></div>
               <input 
-                type="password" required 
-                className="w-full bg-zinc-50 border-zinc-100 rounded-[2rem] py-5 pl-14 pr-6 outline-none focus:ring-4 focus:ring-indigo-100/50 focus:border-indigo-200 transition-all font-bold text-sm"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                type="password" placeholder="••••••••" required 
+                className="w-full bg-slate-900/50 border-white/5 rounded-2xl p-6 pl-14 outline-none font-bold text-2xl tracking-widest text-blue-400 focus:border-blue-500/50 transition-all"
+                value={password} onChange={(e) => setPassword(e.target.value)}
               />
             </div>
           </div>
-          
+
           <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full py-5 rounded-[2rem] bg-zinc-900 text-white font-[900] text-xl hover:bg-indigo-600 active:scale-95 transition-all shadow-2xl shadow-indigo-100 disabled:opacity-50"
+            type="submit" disabled={loading} 
+            className="w-full py-8 mt-4 rounded-2xl bg-white text-black font-[1000] text-3xl hover:bg-blue-600 hover:text-white transition-all shadow-4xl active:scale-95 disabled:opacity-50 uppercase tracking-widest"
           >
-            {loading ? 'Authenticating...' : 'Sign In'}
+            {loading ? 'Authenticating...' : 'Enter Hub'}
           </button>
         </form>
-        
-        <p className="text-center text-zinc-400 text-sm mt-12 font-medium">
-          New here? <Link href="/register" className="text-indigo-600 font-black hover:underline">Create DNA Account</Link>
+
+        <p className="mt-16 text-center text-xs font-black uppercase tracking-widest text-slate-700">
+           New developer? <Link href="/register" className="text-blue-500 hover:text-white transition-colors">Register Node</Link>
         </p>
       </motion.div>
     </div>

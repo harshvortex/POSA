@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Heart, Play, ArrowRight, ShieldCheck, Cpu, Briefcase, Sparkles, Smile, Target, TrendingUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ShieldCheck, Cpu, Target, Play, TrendingUp, Sparkles, MessageCircle, ChevronRight, Zap, Box, Star, Verified, Search, Filter, Globe, BarChart3, Users, Briefcase, Plus, Menu, X, ArrowRight, Shield } from 'lucide-react';
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
@@ -15,138 +15,121 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-white text-zinc-900 overflow-x-hidden">
-      <div className="hero-glow opacity-30" />
+    <div className="relative min-h-screen bg-[#020617] text-white selection:bg-blue-500/30 overflow-x-hidden font-sans">
+      <div className="gradient-mesh" />
+      <div className="scan-line" />
       
-      {/* Humanistic Floating Navbar */}
-      <nav className={`fixed top-6 left-1/2 -translate-x-1/2 w-[90%] md:w-[800px] z-50 transition-all duration-500 rounded-3xl border ${scrolled ? 'bg-white/80 backdrop-blur-xl shadow-2xl shadow-rose-200/20 py-3 scale-100' : 'bg-transparent border-transparent py-5 scale-105'}`}>
-        <div className="container mx-auto px-8 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
-               <ShieldCheck className="text-indigo-600 w-6 h-6" />
-            </div>
-            <span className="text-2xl font-black tracking-tighter">PoSA</span>
+      {/* Redesigned Floating Cyber-Navbar */}
+      <nav className={`fixed top-8 left-1/2 -translate-x-1/2 w-[90%] md:w-[950px] z-[200] transition-all duration-700 rounded-2xl border ${scrolled ? 'bg-slate-900/40 backdrop-blur-3xl shadow-2xl border-white/5 py-4 scale-100' : 'bg-transparent border-transparent py-8 scale-105'}`}>
+        <div className="container mx-auto px-10 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+             <div className="w-12 h-12 rounded-xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shadow-2xl shadow-blue-500/10">
+               <Shield size={24} strokeWidth={2.5} />
+             </div>
+             <span className="text-3xl font-black tracking-tighter glow-text">PoSA.</span>
           </div>
           
-          <div className="hidden lg:flex gap-10 text-sm font-bold text-zinc-500">
-             <Link href="#features" className="hover:text-indigo-600 transition-colors">How it works</Link>
-             <Link href="#solutions" className="hover:text-indigo-600 transition-colors">For Talent</Link>
-             <Link href="#recruiter" className="hover:text-indigo-600 transition-colors">For Teams</Link>
+          <div className="hidden lg:flex gap-12 text-[10px] font-black uppercase tracking-[0.3em] text-white/30">
+             <Link href="#how" className="hover:text-blue-400 transition-colors">Protocol</Link>
+             <Link href="#how" className="hover:text-blue-400 transition-colors">Talent</Link>
+             <Link href="#how" className="hover:text-blue-400 transition-colors">Verify</Link>
           </div>
 
-          <div className="flex gap-4 items-center">
-            <Link href="/login" className="text-sm font-black text-indigo-600 px-4 py-2 hover:bg-indigo-50 rounded-xl transition-all">
-              Sign In
+          <div className="flex gap-4">
+            <Link href="/login" className="px-6 py-3 rounded-xl border border-white/5 text-xs font-black uppercase tracking-widest hover:bg-white/5 transition-all active:scale-95">
+              Portal
             </Link>
-            <Link href="/register" className="px-6 py-3 rounded-2xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20 active:scale-95">
-              Get Started
+            <Link href="/register" className="px-8 py-4 rounded-xl bg-blue-600 text-white text-xs font-black uppercase tracking-[0.2em] hover:bg-blue-700 transition-all shadow-2xl shadow-blue-600/20 active:scale-95">
+              Sync DNA
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Modern Hero Section */}
-      <main className="container mx-auto px-6 pt-48 pb-20 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center gap-16">
-          <div className="lg:w-1/2 text-left space-y-8">
-            <motion.div 
-               initial={{ opacity: 0, x: -20 }} 
-               animate={{ opacity: 1, x: 0 }}
-               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-50 text-rose-600 text-xs font-black uppercase tracking-wider border border-rose-100"
-            >
-               <Sparkles size={14} /> Human-Ai Synergy
-            </motion.div>
-            
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-              className="text-6xl md:text-7xl font-[900] tracking-tight leading-[0.95] text-zinc-900"
-            >
-              Verify <span className="text-indigo-600">Talent</span> with Heart.
-            </motion.h1>
-            
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-xl text-zinc-500 leading-relaxed max-w-lg font-medium"
-            >
-              We don&apos;t just score code. We understand potential. Our AI creates a human-centered "Skill DNA" based on your actual work.
-            </motion.p>
-            
-            <div className="flex flex-wrap gap-4 pt-4">
-               <Link href="/register" className="group px-8 py-5 rounded-[2rem] bg-zinc-900 h-fit hover:bg-indigo-600 text-white font-black text-lg transition-all shadow-2xl shadow-indigo-200 flex items-center gap-3">
-                 Build Your DNA <ArrowRight className="group-hover:translate-x-1" />
-               </Link>
-               <div className="flex items-center gap-4 px-6 border-l-2 border-zinc-100">
-                  <div className="flex -space-x-3">
-                     {[1, 2, 3].map(i => <div key={i} className="w-10 h-10 rounded-full bg-zinc-200 border-2 border-white" />)}
-                  </div>
-                  <div className="text-xs font-black text-zinc-400 uppercase tracking-widest">Joined by 1.2k+ Engineers</div>
-               </div>
-            </div>
-          </div>
+      <main className="container mx-auto px-8 pt-72 pb-48 relative z-10 text-center flex flex-col items-center">
+         <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+            className="px-6 py-2 rounded-full border border-blue-500/10 mb-12 flex items-center gap-3 font-black text-[10px] uppercase tracking-[0.4em] bg-blue-500/5 text-blue-400 shadow-2xl shadow-blue-500/5"
+         >
+            <div className="w-2 h-2 rounded-full bg-blue-500 animate-ping" /> Security Protocol 4.0 ACTIVE
+         </motion.div>
+         
+         <motion.h1 
+           initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
+           className="text-7xl md:text-[9rem] font-[1000] tracking-[-0.05em] leading-[0.85] mb-16 max-w-6xl capitalize glow-text"
+         >
+           Verified <br/> Technical <span className="text-blue-500 italic">Genesis.</span>
+         </motion.h1>
+         
+         <motion.p 
+           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
+           className="text-xl md:text-2xl text-slate-400 leading-relaxed max-w-3xl font-medium mb-20 tracking-tight"
+         >
+           Resumes are legacy data. PoSA uses **Llama-3-70B Verification** to ingest your total GitHub history into a tamper-proof professional DNA.
+         </motion.p>
+         
+         <div className="flex flex-wrap justify-center gap-8 mb-48">
+            <Link href="/register" className="group px-14 py-8 rounded-2xl bg-white text-black font-[1000] text-3xl transition-all hover:bg-blue-600 hover:text-white active:scale-95 shadow-2xl flex items-center gap-6 relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-12 h-12 bg-white/10 group-hover:block hidden animate-ping" />
+               Build Your Protocol <ArrowRight size={38} strokeWidth={4} className="group-hover:translate-x-2 transition-transform" />
+            </Link>
+         </div>
 
-          <motion.div 
-             initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }}
-             className="lg:w-1/2 relative"
-          >
-             <div className="relative rounded-[4rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] group">
-                <img 
-                  src="/posa_humanistic_hero.png" 
-                  alt="Humanistic AI Collaboration" 
-                  className="w-full h-auto transform group-hover:scale-105 transition-all duration-1000"
-                />
-             </div>
-             <div className="absolute -bottom-10 -left-10 glass-card p-6 border shadow-indigo-100 border-indigo-100 w-64 animate-bounce-slow">
-                <div className="flex gap-4 items-center">
-                  <div className="w-12 h-12 rounded-2xl bg-indigo-500 text-white flex items-center justify-center font-black text-xl shadow-lg">94</div>
-                  <div>
-                    <h4 className="text-xs font-black uppercase text-zinc-400">Match Score</h4>
-                    <p className="text-sm font-bold text-zinc-900">Highly Capable Senior Java</p>
-                  </div>
-                </div>
-             </div>
-          </motion.div>
-        </div>
-
-        {/* Improved Feature Cards */}
-        <div id="features" className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-48">
-          <FeatureCard 
-            icon={<Smile className="text-rose-500" />}
-            bg="bg-rose-50"
-            title="Approachable Analysis"
-            desc="Instead of robotic metrics, we generate a professional career story from your repositories."
-          />
-          <FeatureCard 
-            icon={<Target className="text-indigo-500" />}
-            bg="bg-indigo-50"
-            title="Real-time Interrogation"
-            desc="A human-styled conversation that verifies depth without the stress of whiteboard coding."
-          />
-          <FeatureCard 
-            icon={<TrendingUp className="text-emerald-500" />}
-            bg="bg-emerald-50"
-            title="Growth & Fit"
-            desc="We score your trajectory, showing recruiters where you excel and how you&apos;ll evolve."
-          />
-        </div>
+         {/* Cyber-Grid Features */}
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 w-full max-w-7xl pt-24 border-t border-white/5 relative">
+            <div className="absolute -top-px left-1/2 -translate-x-1/2 w-32 h-px bg-blue-500 shadow-[0_0_20px_blue]" />
+            <Feature 
+               icon={<Cpu size={36} />} 
+               title="Llama-3 Detection" 
+               desc="Deep-layer repository analysis detecting architecture patterns, security maturity, and execution depth." 
+            />
+            <Feature 
+               icon={<Play size={36} />} 
+               title="Reactive Viva" 
+               desc="High-fidelity interrogation sessions designed to explore technical boundaries in real-time." 
+            />
+            <Feature 
+               icon={<Target size={36} />} 
+               title="Market Precision" 
+               desc="Instant alignment with high-value positions based on verified genetic skill markup." 
+            />
+         </div>
       </main>
 
-      <footer className="py-20 text-center text-zinc-400 border-t border-zinc-50 relative z-10 bg-zinc-50/30">
-        <p className="text-xs font-black uppercase tracking-[0.2em]">Build with heart &bull; powered by AI</p>
+      {/* Cyber-Social Proof */}
+      <div className="py-24 border-t border-white/5 bg-slate-900/20 backdrop-blur-md">
+         <div className="container mx-auto px-10 text-center">
+            <div className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-500 mb-12">Secured Network Partners</div>
+            <div className="flex flex-wrap justify-center gap-20 opacity-30 grayscale hover:grayscale-0 transition-all duration-700">
+               <LogoPlaceholder hideOnMobile={false} /> <LogoPlaceholder hideOnMobile={false} /> <LogoPlaceholder hideOnMobile={true} /> <LogoPlaceholder hideOnMobile={true} />
+            </div>
+         </div>
+      </div>
+
+      <footer className="py-20 text-center border-t border-white/5 relative z-10">
+         <div className="flex justify-center gap-12 mb-8">
+            <Link href="#" className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-400">Security</Link>
+            <Link href="#" className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-400">Documentation</Link>
+            <Link href="#" className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-400">Network</Link>
+         </div>
+         <p className="text-[9px] font-bold text-slate-600 uppercase tracking-[0.4em]">&copy; 2026 PoSA ARCHIVE &bull; VERSION 4.2.0 &bull; ALL RIGHTS RESERVED</p>
       </footer>
     </div>
   );
 }
 
-function FeatureCard({ icon, title, desc, bg }: any) {
+function Feature({ icon, title, desc }: any) {
   return (
-    <div className="p-10 rounded-[3rem] bg-white border border-zinc-100 hover:border-indigo-100 hover:shadow-2xl hover:shadow-indigo-200/20 transition-all group">
-      <div className={`w-14 h-14 rounded-3xl ${bg} flex items-center justify-center mb-10 transition-transform group-hover:scale-110`}>
-        {icon}
-      </div>
-      <h3 className="text-2xl font-black mb-4 tracking-tight">{title}</h3>
-      <p className="text-zinc-500 leading-relaxed font-medium">
-        {desc}
-      </p>
+    <div className="cyber-card p-16 text-left group">
+       <div className="w-16 h-16 rounded-xl bg-slate-800 border border-white/5 flex items-center justify-center mb-12 text-blue-400 group-hover:scale-110 group-hover:border-blue-500 transition-all">
+          {icon}
+       </div>
+       <h3 className="text-4xl font-[1000] mb-4 tracking-tighter leading-none glow-text">{title}</h3>
+       <p className="text-slate-400 text-lg leading-relaxed font-medium">{desc}</p>
     </div>
   );
+}
+
+function LogoPlaceholder({ hideOnMobile }: { hideOnMobile: boolean }) {
+  return <div className={`text-2xl font-black uppercase tracking-[0.2em] transform -skew-x-12 ${hideOnMobile ? 'hidden lg:block' : ''}`}>STITCH.DEV</div>;
 }
