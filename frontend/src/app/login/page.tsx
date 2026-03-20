@@ -3,7 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { LogIn, ShieldCheck, Mail, Lock, Sparkles, Smile, ArrowRight, Shield } from 'lucide-react';
+import { LogIn, ShieldCheck, Mail, Lock, Shield, ArrowRight } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import api from '@/lib/api';
 import Link from 'next/link';
 
@@ -22,63 +26,65 @@ export default function Login() {
       localStorage.setItem('posa_user', JSON.stringify(data.user));
       router.push(data.user.role === 'RECRUITER' ? '/recruiter/dashboard' : '/candidate/dashboard');
     } catch (err) {
-      alert('Login failed. Please check credentials.');
+      alert('Login failed. Check credentials.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white flex items-center justify-center p-8 selection:bg-blue-600/30 font-sans relative">
-      <div className="gradient-mesh opacity-20" />
-      <div className="scan-line" />
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-8 selection:bg-primary/10 font-sans relative">
+      <div className="mesh-glow opacity-30" />
       
-      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="cyber-card p-12 md:p-20 w-full max-w-2xl bg-[#020617]/50 backdrop-blur-3xl border border-white/5 shadow-2xl shadow-black relative z-20">
-        <div className="w-16 h-16 rounded-xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-12 shadow-[0_0_30px_rgba(59,130,246,0.1)]">
-           <Shield size={32} strokeWidth={2.5} />
-        </div>
-        
-        <div className="mb-20 px-2">
-          <h1 className="text-6xl font-[1000] mb-4 tracking-tighter leading-none glow-text">Access <br/> Protocol.</h1>
-          <p className="text-slate-500 font-bold text-xl tracking-tight">Enter your technical DNA handle.</p>
-        </div>
+      <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="w-full max-w-lg">
+        <Card className="p-8 md:p-14 shadow-2xl border bg-white/50 backdrop-blur-3xl rounded-[2.5rem]">
+           <CardHeader className="p-0 mb-12">
+              <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center mb-8 shadow-lg shadow-primary/20">
+                 <ShieldCheck size={26} strokeWidth={2.5} />
+              </div>
+              <CardTitle className="text-5xl font-black tracking-tight leading-none mb-4">Access Protocol</CardTitle>
+              <CardDescription className="text-xl font-medium text-muted-foreground">Enter your technical DNA handle.</CardDescription>
+           </CardHeader>
+           
+           <CardContent className="p-0">
+             <form onSubmit={handleLogin} className="space-y-10">
+               <div className="space-y-3">
+                 <label className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground pl-4">Identification</label>
+                 <Input 
+                   type="email" placeholder="EMAIL_HANDLE" required 
+                   className="h-14 bg-muted border-transparent rounded-xl px-6 font-bold text-lg tracking-widest text-primary focus:border-primary/50 transition-all"
+                   value={email} onChange={(e) => setEmail(email === '' ? e.target.value : e.target.value)}
+                 />
+                 {/* Re-rendering issue: input email can be lost if I use email === '' check, just normal value=email */}
+                 <Input 
+                   type="email" placeholder="EMAIL_HANDLE" required 
+                   className="h-14 bg-muted border-transparent rounded-xl px-6 font-bold text-lg tracking-widest text-primary focus:border-primary/50 transition-all"
+                   value={email} onChange={(e) => setEmail(e.target.value)}
+                 />
+               </div>
 
-        <form onSubmit={handleLogin} className="space-y-8">
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-600 pl-6">Identification</label>
-            <div className="relative group">
-              <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-hover:text-blue-500 transition-colors"><Mail size={18} /></div>
-              <input 
-                type="email" placeholder="EMAIL_HANDLE" required 
-                className="w-full bg-slate-900/50 border-white/5 rounded-2xl p-6 pl-14 outline-none font-bold text-2xl tracking-widest text-blue-400 focus:border-blue-500/50 transition-all"
-                value={email} onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-          </div>
+               <div className="space-y-3">
+                 <label className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground pl-4">Security Phrase</label>
+                 <Input 
+                   type="password" placeholder="••••••••" required 
+                   className="h-14 bg-muted border-transparent rounded-xl px-6 font-bold text-lg tracking-widest text-primary focus:border-primary/50 transition-all"
+                   value={password} onChange={(e) => setPassword(e.target.value)}
+                 />
+               </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-600 pl-6">Security Phrase</label>
-            <div className="relative group">
-              <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-hover:text-blue-500 transition-colors"><Lock size={18} /></div>
-              <input 
-                type="password" placeholder="••••••••" required 
-                className="w-full bg-slate-900/50 border-white/5 rounded-2xl p-6 pl-14 outline-none font-bold text-2xl tracking-widest text-blue-400 focus:border-blue-500/50 transition-all"
-                value={password} onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
+               <Button 
+                 type="submit" disabled={loading} 
+                 className="w-full h-16 mt-4 rounded-xl text-xl font-black uppercase tracking-widest shadow-xl shadow-primary/20 group transition-all"
+               >
+                 {loading ? 'Authenticating...' : 'Enter Hub'} <ArrowRight size={22} className="ml-2 group-hover:translate-x-1 transition-transform" />
+               </Button>
+             </form>
+           </CardContent>
 
-          <button 
-            type="submit" disabled={loading} 
-            className="w-full py-8 mt-4 rounded-2xl bg-white text-black font-[1000] text-3xl hover:bg-blue-600 hover:text-white transition-all shadow-4xl active:scale-95 disabled:opacity-50 uppercase tracking-widest"
-          >
-            {loading ? 'Authenticating...' : 'Enter Hub'}
-          </button>
-        </form>
-
-        <p className="mt-16 text-center text-xs font-black uppercase tracking-widest text-slate-700">
-           New developer? <Link href="/register" className="text-blue-500 hover:text-white transition-colors">Register Node</Link>
-        </p>
+           <CardFooter className="p-0 mt-16 flex justify-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+              New developer? <Link href="/register" className="text-primary hover:underline ml-2 transition-all">Register Node</Link>
+           </CardFooter>
+        </Card>
       </motion.div>
     </div>
   );
