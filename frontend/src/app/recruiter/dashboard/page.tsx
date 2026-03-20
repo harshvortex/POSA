@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Github, Users, Briefcase, Search, Filter, ShieldCheck, TrendingUp, Target, Plus, ChevronRight, LogOut, Heart, Sparkles } from 'lucide-react';
+import { Github, Users, Briefcase, Search, Filter, ShieldCheck, TrendingUp, Target, Plus, ChevronRight, LogOut, Heart, Sparkles, Smile } from 'lucide-react';
 import api from '@/lib/api';
 
 export default function RecruiterDashboard() {
