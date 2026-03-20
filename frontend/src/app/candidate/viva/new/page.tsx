@@ -1,27 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, Send, ShieldCheck, Trophy, ArrowRight, Zap, Target, Sparkles, Smile, ArrowLeft, Shield, Activity, Terminal, AlertTriangle, Fingerprint } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Fingerprint, Zap, CheckCircle, AlertCircle } from 'lucide-react';
 import api from '@/lib/api';
 
 export default function NewViva() {
-  const [topic, setTopic] = useState('Full Stack Java Development');
+  const [topic, setTopic] = useState('Full Stack Development');
   const [loading, setLoading] = useState(false);
   const [session, setSession] = useState<any>(null);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
-  const [evalResult, setEvalResult] = useState<any>(null);
+  const [result, setResult] = useState<any>(null);
   const router = useRouter();
 
   const startViva = async () => {
+    if (!topic.trim()) return;
     setLoading(true);
     try {
       const { data } = await api.post('/candidate/viva/start', { topic });
       setSession(data);
       setAnswers(new Array(data.questions.length).fill(''));
-    } catch (err) { alert('Failed to start session'); }
+    } catch { alert('Failed to start. Try again.'); }
     finally { setLoading(false); }
   };
 
@@ -29,146 +30,201 @@ export default function NewViva() {
     setLoading(true);
     try {
       const { data } = await api.post(`/candidate/viva/${session.sessionId}/submit`, { answers });
-      setEvalResult(data.evaluation);
-    } catch (err) { alert('Failed to submit session'); }
+      setResult(data.evaluation);
+    } catch { alert('Submission failed.'); }
     finally { setLoading(false); }
   };
 
-  if (evalResult) {
-    return (
-      <div className="min-h-screen py-24 px-8 max-w-5xl mx-auto flex flex-col items-center bg-[#020617] relative z-20">
-        <div className="gradient-mesh opacity-20" />
-        <div className="scan-line" />
-        <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="cyber-card p-16 md:p-24 w-full bg-[#020617]/50 backdrop-blur-3xl border-emerald-500/20 shadow-[0_0_100px_rgba(16,185,129,0.1)] text-center relative overflow-hidden">
-           <div className="absolute top-0 inset-x-0 h-1 bg-emerald-500 shadow-[0_0_20px_emerald]" />
-           <div className="w-32 h-32 rounded-full border-4 border-emerald-500/20 flex items-center justify-center mx-auto mb-12 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
-              <Trophy size={64} className="text-emerald-500 drop-shadow-[0_0_10px_emerald]" />
-           </div>
-           
-           <h1 className="text-6xl font-[1000] mb-8 tracking-tighter glow-text uppercase">Transcript Validated.</h1>
-           <p className="text-slate-500 font-bold mb-16 text-xl tracking-tight uppercase tracking-[0.2em] opacity-50">Genetic proficiency node synchronized with cloud archive.</p>
-           
-           <div className="flex flex-col md:flex-row gap-12 mb-20">
-              <div className="flex-1 p-12 bg-white/5 rounded-3xl border border-white/5 group hover:border-blue-500/30 transition-all">
-                 <div className="text-[10px] font-black uppercase text-blue-500 tracking-[0.4em] mb-4">Verification Score</div>
-                 <div className="text-8xl font-[1000] tracking-tighter glow-text text-white">{evalResult.score}</div>
-              </div>
-              <div className="flex-1 p-12 bg-white/5 rounded-3xl border border-white/5 text-left relative group hover:border-emerald-500/30 transition-all">
-                 <Sparkles className="absolute -top-4 -right-4 text-emerald-500 opacity-20 group-hover:opacity-40 transition-opacity" size={100} />
-                 <h3 className="text-xs font-black uppercase text-emerald-500 tracking-[0.2em] mb-6">AI Feedback Transcript</h3>
-                 <p className="text-slate-300 font-bold leading-relaxed text-lg italic">"{evalResult.feedback}"</p>
-              </div>
-           </div>
-           
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20 text-left">
-              <div className="p-10 rounded-3xl bg-emerald-500/5 border border-emerald-500/10">
-                 <h4 className="text-[10px] font-black uppercase text-emerald-400 tracking-[0.3em] mb-6 flex items-center gap-2"><ShieldCheck size={14} /> Core Vector Strengths</h4>
-                 <ul className="space-y-4">
-                   {evalResult.strengths.map((s: string) => <li key={s} className="flex gap-4 items-center font-bold text-slate-100 text-sm italic"> <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" /> {s}</li>)}
-                 </ul>
-              </div>
-              <div className="p-10 rounded-3xl bg-blue-500/5 border border-blue-500/10 flex items-center justify-center text-center">
-                 <p className="text-blue-400 font-black text-xs uppercase tracking-widest leading-relaxed">System confidence index: 98.4% <br/> High-Intelligence assessment complete.</p>
-              </div>
-           </div>
+  const progress = session ? ((currentIdx + 1) / session.questions.length) * 100 : 0;
 
-           <button onClick={() => router.push('/candidate/dashboard')} className="px-16 py-8 rounded-2xl bg-white text-black font-[1000] text-2xl hover:bg-blue-600 hover:text-white transition-all shadow-4xl active:scale-95 uppercase tracking-widest">
-            Commit to DNA
-           </button>
-        </motion.div>
-      </div>
-    );
-  }
+  if (result) return (
+    <div className="min-h-screen flex items-center justify-center p-6 bg-[#f8fafc]">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
+        className="w-full max-w-2xl"
+      >
+        <div className="surface p-10 text-center mb-6">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-500/20">
+            <CheckCircle size={36} className="text-white" />
+          </div>
+          <h1 className="text-4xl font-black tracking-tight mb-2">Session Complete</h1>
+          <p className="text-gray-400 text-sm mb-8">Your results have been recorded to your Skill DNA profile.</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <div className="p-6 rounded-2xl bg-indigo-50 border border-indigo-100">
+              <div className="label-xs text-indigo-500 mb-2">Verification Score</div>
+              <div className="text-5xl font-black text-indigo-600 tracking-tight">{result.score}</div>
+            </div>
+            <div className="p-6 rounded-2xl bg-gray-50 border border-gray-100 text-left">
+              <div className="label-xs text-gray-400 mb-3">Strengths Detected</div>
+              <ul className="space-y-1.5">
+                {result.strengths?.map((s: string) => (
+                  <li key={s} className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <CheckCircle size={12} className="text-emerald-500 flex-shrink-0" /> {s}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-gray-50 border border-gray-100 text-left mb-8">
+            <div className="label-xs text-gray-400 mb-2">AI Feedback</div>
+            <p className="text-sm text-gray-600 leading-relaxed italic">"{result.feedback}"</p>
+          </div>
+
+          <button
+            onClick={() => router.push('/candidate/dashboard')}
+            className="btn-primary w-full h-11 text-sm"
+          >
+            Back to Dashboard <ArrowRight size={15} />
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center py-20 px-8 bg-[#020617] text-white selection:bg-blue-600/30 font-sans overflow-hidden">
-      <div className="gradient-mesh opacity-20" />
-      <div className="scan-line" />
-      
+    <div className="min-h-screen flex items-center justify-center p-6 bg-[#f8fafc]">
       {!session ? (
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="cyber-card p-16 md:p-24 w-full max-w-3xl text-center bg-[#020617]/50 backdrop-blur-3xl border-white/5 shadow-2xl relative overflow-hidden group">
-          <div className="absolute top-0 left-0 w-2 h-full bg-blue-500 group-hover:bg-blue-400 transition-all shadow-[0_0_20px_blue]" />
-          <div className="w-24 h-24 rounded-2xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center mb-12 mx-auto text-blue-400 shadow-[0_0_40px_rgba(59,130,246,0.1)] group-hover:scale-110 transition-transform">
-            <Fingerprint size={42} strokeWidth={2.5} />
-          </div>
-          <h1 className="text-6xl font-[1000] mb-6 tracking-tighter leading-none glow-text">Initialize <br/> Infiltration.</h1>
-          <p className="text-slate-500 mb-16 max-w-sm mx-auto font-bold text-xl tracking-tight leading-relaxed">Select your knowledge domain for technical interrogation. Every response is recorded for genetic indexing.</p>
-          
-          <div className="text-left mb-16 px-4">
-            <label className="text-[10px] font-black uppercase tracking-[0.6em] text-slate-700 pl-6 mb-2 block">Interrogation Domain</label>
-            <input 
-              type="text" 
-              className="w-full bg-slate-900 border-white/5 rounded-2xl px-10 py-8 outline-none focus:border-blue-500/50 transition-all font-[1000] text-3xl tracking-tighter text-blue-400 shadow-inner"
-              value={topic} onChange={(e) => setTopic(e.target.value)}
-            />
-          </div>
-          
-          <button onClick={startViva} disabled={loading} className="w-full py-8 rounded-2xl bg-white text-black font-[1000] text-3xl hover:bg-blue-600 hover:text-white active:scale-95 transition-all shadow-4xl uppercase tracking-widest flex items-center justify-center gap-6 group">
-            {loading ? 'Decrypting...' : 'Begin Protocol'} <ArrowRight size={36} strokeWidth={4} className="group-hover:translate-x-2 transition-transform" />
-          </button>
-        </motion.div>
-      ) : (
-        <div className="w-full max-w-6xl relative z-20">
-          <div className="flex justify-between items-center mb-12 px-8">
-            <div className="flex gap-4">
-              {session.questions.map((_: any, i: number) => (
-                <div key={i} className={`h-1.5 rounded-full transition-all duration-1000 ${i === currentIdx ? 'w-32 bg-blue-500 shadow-[0_0_15px_blue]' : i < currentIdx ? 'w-10 bg-emerald-500/30' : 'w-10 bg-white/5'}`} />
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-xl"
+        >
+          <div className="surface p-10">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-8 shadow-lg shadow-indigo-500/20">
+              <Fingerprint size={22} className="text-white" />
+            </div>
+
+            <div className="label-xs text-indigo-500 mb-2">Technical Viva</div>
+            <h1 className="display-md mb-2">Start a new session.</h1>
+            <p className="text-gray-400 text-sm leading-relaxed mb-8">
+              Choose a topic, and our AI will generate 3 deep technical questions. Your answers are analyzed to update your Skill DNA.
+            </p>
+
+            <div className="space-y-3 mb-8">
+              <label className="label-xs text-gray-500">Session Topic</label>
+              <input
+                type="text"
+                placeholder="e.g. Python Internals, System Design, React..."
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && startViva()}
+                className="form-input h-12 text-base"
+              />
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 mb-8">
+              {['Python & AI', 'System Design', 'React & Next.js'].map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setTopic(t)}
+                  className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all ${
+                    topic === t
+                      ? 'bg-indigo-50 border-indigo-200 text-indigo-600'
+                      : 'bg-gray-50 border-gray-100 text-gray-500 hover:border-indigo-200 hover:text-indigo-500'
+                  }`}
+                >
+                  {t}
+                </button>
               ))}
             </div>
-            <div className="flex items-center gap-3 px-6 py-2 rounded-xl bg-white/5 border border-white/5 text-blue-400 font-black text-[10px] tracking-[0.4em] uppercase">
-               Node Access Point {String(currentIdx + 1).padStart(2, '0')}
+
+            <button
+              onClick={startViva}
+              disabled={loading || !topic.trim()}
+              className="btn-primary w-full h-12 text-sm"
+            >
+              {loading ? (
+                <span className="flex items-center gap-2 justify-center">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Generating Questions...
+                </span>
+              ) : (
+                <><Zap size={15} fill="currentColor" /> Begin Interrogation</>
+              )}
+            </button>
+          </div>
+        </motion.div>
+      ) : (
+        <div className="w-full max-w-3xl">
+          {/* Progress Header */}
+          <div className="mb-6 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => currentIdx > 0 && setCurrentIdx(currentIdx - 1)}
+                disabled={currentIdx === 0}
+                className="btn-ghost h-9 w-9 px-0 justify-center disabled:opacity-30"
+              >
+                <ArrowLeft size={16} />
+              </button>
+              <span className="text-sm font-bold text-gray-700">Question {currentIdx + 1} / {session.questions.length}</span>
             </div>
+            <div className="label-xs text-indigo-500">{session.topic}</div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="h-1.5 rounded-full bg-gray-100 mb-8 overflow-hidden">
+            <motion.div
+              animate={{ width: `${progress}%` }}
+              transition={{ ease: [0.16, 1, 0.3, 1] }}
+              className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500"
+            />
           </div>
 
           <AnimatePresence mode="wait">
-            <motion.div 
-               key={currentIdx}
-               initial={{ x: 30, opacity: 0 }} 
-               animate={{ x: 0, opacity: 1 }} 
-               exit={{ x: -30, opacity: 0 }} 
-               className="cyber-card p-16 md:p-24 shadow-4xl bg-[#020617]/50 backdrop-blur-3xl min-h-[650px] flex flex-col justify-between"
+            <motion.div
+              key={currentIdx}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="surface p-10"
             >
-              <div className="space-y-16">
-                <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
-                   <div className="text-blue-500 px-1 py-2 rounded-xl w-fit mb-12 font-black text-[10px] tracking-[0.4em] uppercase flex items-center gap-3"><Terminal size={14} /> System Probe Active</div>
-                   <h2 className="text-6xl font-[1000] leading-[1] tracking-tighter text-white glow-text">{session.questions[currentIdx]}</h2>
-                </motion.div>
-                
-                <div className="relative group">
-                   <div className="absolute top-6 right-8 text-[10px] font-black uppercase text-slate-700 tracking-widest">Buffer Status: Active</div>
-                   <textarea 
-                      autoFocus
-                      className="w-full bg-[#0f172a]/50 border-white/5 rounded-3xl p-12 focus:border-blue-500/50 transition-all outline-none resize-none font-bold text-2xl min-h-[320px] text-slate-300 shadow-inner tracking-tight leading-relaxed placeholder:text-slate-800"
-                      placeholder="Input knowledge string here..."
-                      value={answers[currentIdx]}
-                      onChange={(e) => {
-                        const a = [...answers];
-                        a[currentIdx] = e.target.value;
-                        setAnswers(a);
-                      }}
-                   />
-                </div>
+              <div className="label-xs text-gray-400 mb-5">AI-Generated Question</div>
+              <h2 className="text-2xl font-bold tracking-tight leading-snug mb-8">
+                {session.questions[currentIdx]}
+              </h2>
+
+              <div className="space-y-2 mb-8">
+                <label className="label-xs text-gray-500">Your Answer</label>
+                <textarea
+                  autoFocus
+                  rows={7}
+                  className="w-full p-4 rounded-xl border-1.5 border-gray-100 bg-gray-50/50 text-sm font-medium text-gray-800 leading-relaxed resize-none focus:outline-none focus:border-indigo-300 focus:bg-white transition-all placeholder:text-gray-300 placeholder:font-normal"
+                  placeholder="Explain your understanding clearly and concisely..."
+                  value={answers[currentIdx]}
+                  onChange={(e) => {
+                    const a = [...answers];
+                    a[currentIdx] = e.target.value;
+                    setAnswers(a);
+                  }}
+                />
               </div>
 
-              <div className="flex gap-8 mt-16 pt-12 border-t border-white/5">
-                {currentIdx < session.questions.length - 1 ? (
-                  <button 
-                    onClick={() => setCurrentIdx(currentIdx + 1)}
-                    disabled={!answers[currentIdx]}
-                    className="flex-1 py-8 rounded-2xl bg-white text-black font-[1000] text-3xl hover:bg-blue-600 hover:text-white active:scale-95 transition-all shadow-4xl disabled:opacity-20 disabled:grayscale flex items-center justify-center gap-6 uppercase tracking-widest group"
-                  >
-                    Commit Response <ArrowRight strokeWidth={4} size={32} className="group-hover:translate-x-2 transition-transform" />
-                  </button>
-                ) : (
-                  <button 
-                    onClick={submitViva}
-                    disabled={loading || !answers[currentIdx]}
-                    className="flex-1 py-8 rounded-2xl bg-white text-emerald-600 font-[1000] text-3xl hover:bg-emerald-600 hover:text-white active:scale-95 transition-all shadow-[0_0_50px_rgba(16,185,129,0.2)] flex items-center justify-center gap-6 uppercase tracking-widest group border-emerald-500/20"
-                  >
-                    {loading ? 'Analyzing Protocol...' : 'Finalize Interrogation'} <Zap strokeWidth={4} size={32} fill="currentColor" className="group-hover:scale-125 transition-transform" />
-                  </button>
-                )}
-              </div>
+              {currentIdx < session.questions.length - 1 ? (
+                <button
+                  onClick={() => setCurrentIdx(currentIdx + 1)}
+                  disabled={!answers[currentIdx]?.trim()}
+                  className="btn-primary w-full h-11 text-sm disabled:opacity-40"
+                >
+                  Next Question <ArrowRight size={15} />
+                </button>
+              ) : (
+                <button
+                  onClick={submitViva}
+                  disabled={loading || !answers[currentIdx]?.trim()}
+                  className="btn-primary w-full h-11 text-sm bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/20 disabled:opacity-40"
+                >
+                  {loading ? (
+                    <span className="flex items-center gap-2 justify-center">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Analyzing Responses...
+                    </span>
+                  ) : (
+                    <><CheckCircle size={15} /> Submit & Finalize</>
+                  )}
+                </button>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>

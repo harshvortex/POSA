@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Github, Play, ShieldCheck, Trophy, Target, TrendingUp, Calendar, Zap, Activity, User, ArrowRight, Sparkles } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import {
+  Github, Play, ShieldCheck, Target, TrendingUp,
+  ArrowRight, Sparkles, Star, Activity, Plus,
+  BarChart3, Zap, Clock, CheckCircle2
+} from 'lucide-react';
 import api from '@/lib/api';
 
 export default function CandidateDashboard() {
@@ -20,12 +20,10 @@ export default function CandidateDashboard() {
   const router = useRouter();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('posa_user');
-    if (!storedUser) router.push('/login');
-    else {
-      setUser(JSON.parse(storedUser));
-      fetchDashboard();
-    }
+    const stored = localStorage.getItem('posa_user');
+    if (!stored) { router.push('/login'); return; }
+    setUser(JSON.parse(stored));
+    fetchDashboard();
   }, []);
 
   const fetchDashboard = async () => {
@@ -33,138 +31,223 @@ export default function CandidateDashboard() {
       const { data } = await api.get('/candidate/dashboard');
       setProfile(data.profile === 'not created' ? null : data.profile);
       setVivas(data.vivaSessions || []);
-    } catch (err) { console.error(err); }
+    } catch (e) { console.error(e); }
     finally { setLoading(false); }
   };
 
   const connectGitHub = async () => {
-    if (!ghUser) return;
+    if (!ghUser.trim()) return;
     setAnalyzing(true);
     try {
       await api.post('/candidate/github/connect', { githubUsername: ghUser });
       fetchDashboard();
-    } catch (err) { alert('Failed to connect GitHub'); }
+    } catch { alert('Failed to connect. Try again.'); }
     finally { setAnalyzing(false); }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center p-20 font-bold text-muted-foreground animate-pulse text-2xl uppercase tracking-widest">Inference Hub Initializing...</div>;
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="space-y-3 text-center">
+        <div className="w-8 h-8 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin mx-auto" />
+        <p className="text-sm text-gray-400 font-medium">Loading Protocol Hub...</p>
+      </div>
+    </div>
+  );
+
+  const skillDna = profile ? JSON.parse(profile.skillDna || '{}') : {};
+  const topSkills = Object.entries(skillDna).slice(0, 5);
 
   return (
-    <div className="min-h-screen p-8 lg:p-12 max-w-7xl mx-auto pt-24 space-y-12 pb-40 relative z-20">
-      <header className="flex flex-col md:flex-row justify-between items-start gap-8">
-        <div className="space-y-4">
-          <Badge variant="outline" className="px-3 py-1 font-bold text-[10px] tracking-widest uppercase">
-            Authed Profile Node
-          </Badge>
-          <h1 className="text-6xl font-black tracking-tight leading-none">Welcome, {user?.name.split(' ')[0]}</h1>
-          <p className="text-muted-foreground font-medium text-lg max-w-lg">Your technical genetic code is live and ready for interrogation.</p>
+    <div className="min-h-screen p-6 lg:p-10 max-w-6xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+        <div>
+          <div className="label-xs text-indigo-500 mb-2">Protocol Dashboard</div>
+          <h1 className="text-3xl font-black tracking-tight">
+            Good evening, {user?.name?.split(' ')[0] || 'Developer'}.
+          </h1>
+          <p className="text-gray-400 text-sm mt-1">Here's your technical identity overview.</p>
         </div>
-        <Button variant="outline" size="lg" className="h-12 border-muted-foreground/20 rounded-xl" onClick={() => router.push('/settings')}>
-           Access Settings
-        </Button>
-      </header>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Main Profile Info - Bento Feature */}
-        <Card className="lg:col-span-3 border p-12 hover:shadow-xl transition-all group relative overflow-hidden h-[500px] flex flex-col justify-between">
-           <div className="absolute top-0 right-0 p-12 opacity-5"><Github size={200} /></div>
-           <CardHeader className="p-0">
-             <div className="flex justify-between items-start">
-                <div className="w-16 h-16 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/20">
-                  <Github size={32} strokeWidth={2.5} />
-                </div>
-                {!profile && <Badge variant="destructive" className="px-5 py-1.5 font-bold uppercase tracking-widest">Offline Protocol</Badge>}
-                {profile && <Badge variant="secondary" className="px-5 py-1.5 font-bold uppercase tracking-widest text-blue-600 bg-blue-50">Synchronized Node</Badge>}
-             </div>
-             <CardTitle className="text-4xl font-bold tracking-tight mt-10">Identity Protocol</CardTitle>
-             <CardDescription className="text-xl max-w-xl">Initialize your technical DNA by connecting your GitHub repository network. Python-driven analysis begins instantly.</CardDescription>
-           </CardHeader>
-
-           <CardContent className="p-0">
-             {!profile ? (
-                <div className="flex flex-col md:flex-row gap-4 mt-8">
-                  <Input 
-                    placeholder="GITHUB_ENTITY_HANDLE"
-                    className="h-14 bg-muted border-transparent rounded-xl px-6 font-bold text-lg max-w-sm tracking-widest"
-                    value={ghUser} onChange={(e) => setGhUser(e.target.value)}
-                  />
-                  <Button onClick={connectGitHub} disabled={analyzing} className="h-14 px-10 text-lg font-bold">
-                    {analyzing ? 'Ingesting...' : 'Sync with Node'}
-                  </Button>
-                </div>
-             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 pt-8 border-t">
-                   <div className="space-y-2">
-                     <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Genetic Index</span>
-                     <div className="text-5xl font-black text-blue-600">{Math.round(profile.skillScore)}</div>
-                   </div>
-                   <div className="space-y-2">
-                     <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Market Fit</span>
-                     <div className="text-5xl font-black">{Math.round(profile.jobFitScore)}</div>
-                   </div>
-                   <div className="space-y-2">
-                     <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Network Gravity</span>
-                     <div className="text-5xl font-black">{profile.totalStars}</div>
-                   </div>
-                </div>
-             )}
-           </CardContent>
-        </Card>
-
-        {/* Start Interview Action */}
-        <Card className="lg:col-span-1 bg-black text-white hover:shadow-2xl hover:shadow-primary/20 transition-all p-12 flex flex-col justify-between group h-[500px]">
-           <div>
-              <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mb-8 border border-white/10 group-hover:scale-110 transition-all">
-                <Play size={24} fill="currentColor" />
-              </div>
-              <CardTitle className="text-4xl font-black tracking-tight leading-tight">Interrogate Skills.</CardTitle>
-              <CardDescription className="text-white/40 text-lg font-medium leading-relaxed mt-4">
-                Enter the interrogation node to verify your real-world architecture depth.
-              </CardDescription>
-           </div>
-           <Button variant="outline" size="lg" className="w-full h-14 rounded-xl bg-white text-black font-black border-transparent hover:bg-primary hover:text-white" onClick={() => router.push('/candidate/viva/new')}>
-             Enter Viva <ArrowRight className="ml-2" size={18} />
-           </Button>
-        </Card>
+        <button
+          onClick={() => router.push('/candidate/viva/new')}
+          className="btn-primary self-start sm:self-auto"
+        >
+          <Play size={15} fill="currentColor" /> Start Viva
+        </button>
       </div>
 
-      <div className="space-y-8">
-        <div className="flex items-center gap-4">
-           <h2 className="text-3xl font-bold tracking-tight">Timeline Log</h2>
-           <div className="h-px flex-1 bg-muted" />
+      {!profile ? (
+        /* ── ONBOARDING CARD ── */
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+          className="card-hero p-10 noise mb-10"
+        >
+          <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none" />
+          <div className="relative z-10 max-w-xl">
+            <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center mb-6">
+              <Github size={24} className="text-white" />
+            </div>
+            <h2 className="text-2xl font-black text-white mb-2 tracking-tight">Connect your GitHub</h2>
+            <p className="text-white/50 text-sm leading-relaxed mb-8">
+              Our Llama-3 engine will analyze your repositories and generate a verified Skill DNA profile—no résumé needed.
+            </p>
+            <div className="flex gap-3">
+              <input
+                type="text"
+                placeholder="github-username"
+                value={ghUser}
+                onChange={(e) => setGhUser(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && connectGitHub()}
+                className="flex-1 h-11 px-4 rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-white/30 text-sm font-medium focus:outline-none focus:border-indigo-400 transition-colors"
+              />
+              <button
+                onClick={connectGitHub}
+                disabled={analyzing}
+                className="btn-primary h-11 px-6 text-sm"
+              >
+                {analyzing ? (
+                  <span className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Analyzing...
+                  </span>
+                ) : (
+                  'Analyze'
+                )}
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      ) : (
+        /* ── STATS GRID ── */
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {[
+            { label: 'Genetic Index', value: Math.round(profile.skillScore), unit: '/100', icon: <Activity size={14} />, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+            { label: 'Market Fit', value: Math.round(profile.jobFitScore), unit: '%', icon: <Target size={14} />, color: 'text-purple-600', bg: 'bg-purple-50' },
+            { label: 'Growth Score', value: Math.round(profile.growthScore), unit: '', icon: <TrendingUp size={14} />, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+            { label: 'Repositories', value: profile.totalRepos, unit: '', icon: <Github size={14} />, color: 'text-blue-600', bg: 'bg-blue-50' },
+          ].map((s, i) => (
+            <motion.div
+              key={s.label}
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
+              className="card-stat"
+            >
+              <div className={`w-7 h-7 rounded-lg ${s.bg} flex items-center justify-center ${s.color} mb-4`}>
+                {s.icon}
+              </div>
+              <div className="text-3xl font-black tracking-tight mb-0.5">
+                {s.value}<span className="text-base font-semibold text-gray-300">{s.unit}</span>
+              </div>
+              <div className="label-xs text-gray-400">{s.label}</div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {profile && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Skill DNA */}
+          <div className="lg:col-span-2 surface p-7">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="font-bold text-base tracking-tight">Skill DNA</h3>
+                <p className="text-xs text-gray-400 mt-0.5">AI-extracted from your repositories</p>
+              </div>
+              <div className="chip chip-blue">Llama-3 Verified</div>
+            </div>
+            <div className="space-y-4">
+              {topSkills.map(([skill, pct]: any, i) => (
+                <div key={skill}>
+                  <div className="flex justify-between mb-1.5">
+                    <span className="text-sm font-semibold text-gray-700">{skill}</span>
+                    <span className="text-sm font-bold text-indigo-600">{pct}%</span>
+                  </div>
+                  <div className="skill-bar">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${pct}%` }}
+                      transition={{ duration: 1, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                      className="skill-bar-fill"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* AI Summary */}
+          <div className="surface p-7 flex flex-col">
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles size={14} className="text-indigo-500" />
+              <span className="text-sm font-bold">AI Summary</span>
+            </div>
+            <p className="text-sm text-gray-500 leading-relaxed flex-1 italic">
+              "{profile.summary || 'Connect GitHub and run a Viva to generate your AI-powered technical summary.'}"
+            </p>
+            <div className="mt-6 pt-4 border-t border-gray-100 flex items-center gap-2">
+              <CheckCircle2 size={13} className="text-emerald-500" />
+              <span className="text-xs text-gray-400 font-medium">Verified by PoSA Protocol v4</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Session History */}
+      <div className="surface overflow-hidden">
+        <div className="px-7 py-5 border-b border-gray-100 flex items-center justify-between">
+          <div>
+            <h3 className="font-bold text-base tracking-tight">Viva Sessions</h3>
+            <p className="text-xs text-gray-400 mt-0.5">{vivas.length} session{vivas.length !== 1 ? 's' : ''} recorded</p>
+          </div>
+          <button onClick={() => router.push('/candidate/viva/new')} className="btn-ghost text-xs h-8 px-3">
+            <Plus size={13} /> New Session
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {vivas.length > 0 ? vivas.map((v) => (
-            <Card key={v.id} className="p-10 border hover:shadow-lg transition-all flex flex-col justify-between h-[320px]">
-               <div>
-                  <div className="flex justify-between items-center mb-6">
-                    <Badge variant={v.status === 'COMPLETED' ? "secondary" : "outline"} className="px-4 py-1 text-[9px] font-black uppercase tracking-widest">
-                       {v.status}
-                    </Badge>
-                    <span className="text-[10px] font-bold text-gray-300 uppercase underline decoration-gray-100 decoration-2 underline-offset-4">ID {v.id}</span>
+        {vivas.length > 0 ? (
+          <div className="divide-y divide-gray-50">
+            {vivas.map((v, i) => (
+              <motion.div
+                key={v.id}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.05 }}
+                className="px-7 py-5 flex items-center justify-between hover:bg-gray-50/50 transition-colors group cursor-pointer"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
+                    <Play size={14} className="text-indigo-500" fill="currentColor" />
                   </div>
-                  <h3 className="text-2xl font-bold tracking-tight mb-2 uppercase">{v.topic}</h3>
-                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{new Date(v.createdAt).toLocaleDateString()}</p>
-               </div>
-               
-               <div className="flex justify-between items-end">
-                  <div className="space-y-1">
-                     <span className="text-[9px] text-gray-400 block font-bold uppercase tracking-widest">Verification Index</span>
-                     <span className="text-5xl font-black text-blue-600">{v.score || '--'}</span>
+                  <div>
+                    <div className="text-sm font-semibold capitalize">{v.topic}</div>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <Clock size={10} className="text-gray-400" />
+                      <span className="text-xs text-gray-400">{new Date(v.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    </div>
                   </div>
-                  <Button size="icon" variant="ghost" className="w-12 h-12 rounded-xl border-gray-100 hover:bg-gray-50 border">
-                     <ArrowRight size={20} />
-                  </Button>
-               </div>
-            </Card>
-          )) : (
-            <Card className="md:col-span-3 py-48 text-center border-dashed group">
-               <Sparkles size={64} className="text-gray-200 mx-auto mb-6 group-hover:text-primary transition-all duration-700" strokeWidth={1} />
-               <p className="text-gray-400 font-bold text-xl tracking-tight uppercase opacity-50">Historical logs are uninitialized. Begin your first protocol.</p>
-            </Card>
-          )}
-        </div>
+                </div>
+                <div className="flex items-center gap-6">
+                  <div className="text-right">
+                    <div className="text-2xl font-black tracking-tight text-indigo-600">{v.score || '--'}</div>
+                    <div className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Score</div>
+                  </div>
+                  <div className={`chip ${v.status === 'COMPLETED' ? 'chip-green' : 'chip-blue'}`}>
+                    {v.status}
+                  </div>
+                  <ArrowRight size={14} className="text-gray-300 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all" />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <div className="py-24 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center mx-auto mb-4">
+              <Play size={20} className="text-indigo-300" />
+            </div>
+            <p className="text-sm font-semibold text-gray-400 mb-1">No sessions yet</p>
+            <p className="text-xs text-gray-300 mb-5">Start your first Technical Viva to begin building your verified identity.</p>
+            <button onClick={() => router.push('/candidate/viva/new')} className="btn-primary text-sm h-9 px-5">
+              <Zap size={14} /> Start First Session
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

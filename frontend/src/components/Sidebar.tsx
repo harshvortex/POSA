@@ -4,7 +4,11 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Users, Search, Target, ShieldCheck, Play, History, LogOut, LayoutDashboard, UserCircle, Settings, HelpCircle, ChevronRight, Menu, X, Zap, Cpu, Activity, User, Briefcase, Plus, Star, Box, Sparkles } from 'lucide-react';
+import {
+  LayoutDashboard, Play, History, Target, Users,
+  Settings, LogOut, ShieldCheck, ChevronLeft, ChevronRight,
+  Menu, X, Wifi
+} from 'lucide-react';
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
@@ -18,111 +22,196 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
     if (storedUser) setUser(JSON.parse(storedUser));
   }, []);
 
-  const isCandidate = user?.role === 'CANDIDATE';
-  const navItems = isCandidate ? [
-    { name: 'Dashboard', path: '/candidate/dashboard', icon: LayoutDashboard },
-    { name: 'Technical Viva', path: '/candidate/viva/new', icon: Play },
-    { name: 'Identity History', path: '/candidate/viva/history', icon: History },
-    { name: 'Skill DNA Profile', path: '/candidate/profile', icon: Target },
-  ] : [
-    { name: 'Protocol Dashboard', path: '/recruiter/dashboard', icon: LayoutDashboard },
-    { name: 'Talent Network', path: '/recruiter/candidates', icon: Users },
-  ];
+  const isCandidate = user?.role !== 'RECRUITER';
 
-  if (pathname === '/' || pathname === '/login' || pathname === '/register') return <>{children}</>;
+  const navItems = isCandidate
+    ? [
+        { name: 'Dashboard', path: '/candidate/dashboard', icon: LayoutDashboard },
+        { name: 'Technical Viva', path: '/candidate/viva/new', icon: Play },
+        { name: 'Session History', path: '/candidate/viva/history', icon: History },
+        { name: 'Skill Profile', path: '/candidate/profile', icon: Target },
+      ]
+    : [
+        { name: 'Dashboard', path: '/recruiter/dashboard', icon: LayoutDashboard },
+        { name: 'Talent Network', path: '/recruiter/candidates', icon: Users },
+      ];
+
+  const publicRoutes = ['/', '/login', '/register'];
+  if (publicRoutes.includes(pathname)) return <>{children}</>;
+
+  const initials = user?.name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || '??';
 
   return (
-    <div className="flex min-h-screen bg-[#fbfbfc] text-gray-900 selection:bg-blue-500/10 font-sans">
-      <div className="mesh-glow opacity-50" />
-      
-      {/* Sidebar Desktop - Clean White Floating */}
-      <aside className={`fixed h-[calc(100vh-4rem)] top-8 left-8 hidden lg:flex flex-col z-[150] transition-all duration-700 bg-white/80 backdrop-blur-2xl border border-gray-100 rounded-[2rem] shadow-2xl shadow-black/2 ${collapsed ? 'w-24' : 'w-72'}`}>
-        <div className="p-8 flex items-center gap-4 mb-8">
-          <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/10 transition-transform hover:scale-105 active:scale-95 cursor-pointer">
-             <ShieldCheck size={22} strokeWidth={2.5} />
-          </div>
-          {!collapsed && <span className="text-xl font-bold tracking-tight">PoSA Professional</span>}
+    <div className="flex min-h-screen bg-[#f8fafc]">
+      {/* Desktop Sidebar */}
+      <aside
+        className={`hidden lg:flex flex-col fixed h-full z-40 bg-white border-r border-gray-100 transition-all duration-300 ease-out ${
+          collapsed ? 'w-16' : 'w-60'
+        }`}
+      >
+        {/* Logo */}
+        <div className={`flex items-center h-16 border-b border-gray-100 px-4 ${collapsed ? 'justify-center' : 'justify-between'}`}>
+          {!collapsed && (
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                <ShieldCheck size={14} strokeWidth={2.5} className="text-white" />
+              </div>
+              <span className="font-bold text-base tracking-tight">PoSA</span>
+            </div>
+          )}
+          {collapsed && (
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+              <ShieldCheck size={14} strokeWidth={2.5} className="text-white" />
+            </div>
+          )}
+          {!collapsed && (
+            <button
+              onClick={() => setCollapsed(true)}
+              className="w-6 h-6 rounded-md hover:bg-gray-100 flex items-center justify-center text-gray-400 transition-colors"
+            >
+              <ChevronLeft size={14} />
+            </button>
+          )}
         </div>
 
-        <nav className="flex-1 px-4 space-y-2">
-          <div className="mb-10">
-            {!collapsed && <div className="text-[10px] uppercase font-bold tracking-[0.2em] text-gray-400 pl-4 mb-4">Verification Center</div>}
-            {navItems.map((item) => {
-              const active = pathname === item.path;
-              return (
-                <Link key={item.path} href={item.path} className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all relative group ${active ? 'bg-blue-600 text-white shadow-xl shadow-blue-500/10' : 'text-gray-400 hover:bg-gray-50 hover:text-black font-semibold'}`}>
-                  <item.icon size={20} strokeWidth={active ? 3 : 2} className="relative z-10" />
-                  {!collapsed && <span className="text-sm tracking-tight relative z-10">{item.name}</span>}
-                  {!collapsed && active && <ChevronRight size={14} className="ml-auto opacity-40 shadow-xl" />}
-                </Link>
-              );
-            })}
-          </div>
+        {collapsed && (
+          <button
+            onClick={() => setCollapsed(false)}
+            className="mx-auto mt-2 mb-1 w-6 h-6 rounded-md hover:bg-gray-100 flex items-center justify-center text-gray-400 transition-colors"
+          >
+            <ChevronRight size={14} />
+          </button>
+        )}
 
-          <div className="space-y-4 pt-10 border-t border-gray-100">
-            {!collapsed && <div className="text-[10px] uppercase font-bold tracking-[0.2em] text-gray-400 pl-4 mb-4">Management</div>}
-            <Link href="/settings" className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl text-gray-400 hover:text-black hover:bg-gray-50 transition-all font-semibold`}>
-                <Settings size={20} />
-                {!collapsed && <span className="text-sm tracking-tight">Settings</span>}
+        {/* Nav Items */}
+        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-hidden">
+          {!collapsed && <div className="label-xs text-gray-400 px-3 mb-3">{isCandidate ? 'Candidate Hub' : 'Recruiter Hub'}</div>}
+
+          {navItems.map((item) => {
+            const active = pathname === item.path;
+            return (
+              <Link
+                key={item.path}
+                href={item.path}
+                className={`sidebar-item ${active ? 'active' : ''} ${collapsed ? 'justify-center px-2' : ''}`}
+                title={collapsed ? item.name : undefined}
+              >
+                <item.icon size={16} className={`sidebar-icon flex-shrink-0 ${active ? 'text-indigo-600' : ''}`} strokeWidth={active ? 2.5 : 2} />
+                {!collapsed && <span>{item.name}</span>}
+              </Link>
+            );
+          })}
+
+          <div className={`mt-4 pt-4 border-t border-gray-100 space-y-0.5`}>
+            {!collapsed && <div className="label-xs text-gray-400 px-3 mb-3">Account</div>}
+
+            <Link href="/settings" className={`sidebar-item ${pathname === '/settings' ? 'active' : ''} ${collapsed ? 'justify-center px-2' : ''}`}>
+              <Settings size={16} className="flex-shrink-0" strokeWidth={2} />
+              {!collapsed && <span>Settings</span>}
             </Link>
-            <button onClick={() => { localStorage.clear(); router.push('/'); }} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-gray-400 hover:text-rose-500 hover:bg-rose-50/50 transition-all font-semibold">
-                <LogOut size={20} />
-                {!collapsed && <span className="text-sm tracking-tight">Sign Out</span>}
+
+            <button
+              onClick={() => { localStorage.clear(); router.push('/'); }}
+              className={`sidebar-item w-full hover:bg-red-50 hover:text-red-500 ${collapsed ? 'justify-center px-2' : ''}`}
+            >
+              <LogOut size={16} className="flex-shrink-0" strokeWidth={2} />
+              {!collapsed && <span>Sign Out</span>}
             </button>
           </div>
         </nav>
 
-        <div className="p-6 mt-auto">
-           {!collapsed && (
-              <div className="p-6 rounded-[1.5rem] bg-gray-50 border border-gray-100/50 group hover:shadow-sm transition-all text-center">
-                 <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-2">Sync Status</div>
-                 <div className="flex justify-center items-center gap-2 text-[10px] font-bold text-blue-600">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" /> DEPLOYED (V4.0)
-                 </div>
+        {/* User Profile Footer */}
+        {!collapsed && (
+          <div className="p-3 border-t border-gray-100">
+            <div className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                {initials}
               </div>
-           )}
-        </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-semibold truncate">{user?.name || 'Developer'}</div>
+                <div className="flex items-center gap-1.5">
+                  <Wifi size={9} className="text-emerald-500" />
+                  <span className="text-[10px] text-gray-400">Demo Active</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </aside>
 
-      {/* Main Content Area */}
-      <main className={`flex-1 transition-all duration-700 relative ${collapsed ? 'lg:ml-32' : 'lg:ml-80'}`}>
-        <header className="lg:hidden flex justify-between items-center p-8 bg-white/80 backdrop-blur-3xl border-b border-gray-100 sticky top-0 z-[150]">
-           <div className="flex items-center gap-3">
-             <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-lg">
-                <ShieldCheck size={18} strokeWidth={2.5} />
-             </div>
-             <span className="text-xl font-bold tracking-tight">PoSA</span>
-           </div>
-           <button onClick={() => setMobileOpen(!mobileOpen)} className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-           </button>
-        </header>
+      {/* Mobile Header */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-white/90 backdrop-blur-xl border-b border-gray-100 flex items-center justify-between px-4">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+            <ShieldCheck size={14} strokeWidth={2.5} className="text-white" />
+          </div>
+          <span className="font-bold text-base tracking-tight">PoSA</span>
+        </div>
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600"
+        >
+          {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+        </button>
+      </header>
 
-        {children}
-      </main>
-
-      {/* Mobile Nav Overlay */}
+      {/* Mobile Nav Sheet */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div initial={{ opacity: 0, x: -100 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 1, x: -100 }} className="fixed inset-0 z-[300] bg-white p-12 lg:hidden">
-             <div className="flex justify-between items-center mb-16 px-4">
-               <span className="text-3xl font-bold tracking-tight">Platform Access</span>
-               <button onClick={() => setMobileOpen(false)} className="p-4 bg-gray-50 rounded-2xl border border-gray-100"><X size={24} /></button>
-             </div>
-             <div className="space-y-4 px-4">
-               {navItems.map((item) => (
-                 <Link key={item.path} href={item.path} onClick={() => setMobileOpen(false)} className={`flex items-center gap-6 p-8 rounded-3xl ${pathname === item.path ? 'bg-blue-600 text-white shadow-xl shadow-blue-500/10' : 'bg-gray-50 text-gray-400 border border-gray-100 font-semibold'}`}>
-                    <item.icon size={28} strokeWidth={pathname === item.path ? 3 : 2} />
-                    <span className="text-xl font-semibold tracking-tight">{item.name}</span>
-                 </Link>
-               ))}
-             </div>
-             <button onClick={() => { localStorage.clear(); router.push('/'); }} className="w-full mt-20 flex items-center justify-center gap-4 p-8 rounded-3xl bg-rose-50 text-rose-500 font-bold text-lg uppercase tracking-widest shadow-lg shadow-rose-100">
-                <LogOut size={28} /> Sign Out
-             </button>
-          </motion.div>
+          <>
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
+              onClick={() => setMobileOpen(false)}
+            />
+            <motion.div
+              initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="fixed left-0 top-0 bottom-0 w-72 bg-white z-50 lg:hidden flex flex-col shadow-2xl"
+            >
+              <div className="h-14 flex items-center px-5 border-b border-gray-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                    <ShieldCheck size={14} strokeWidth={2.5} className="text-white" />
+                  </div>
+                  <span className="font-bold text-base tracking-tight">PoSA</span>
+                </div>
+              </div>
+
+              <nav className="flex-1 px-4 py-5 space-y-1">
+                {navItems.map((item) => {
+                  const active = pathname === item.path;
+                  return (
+                    <Link
+                      key={item.path}
+                      href={item.path}
+                      onClick={() => setMobileOpen(false)}
+                      className={`sidebar-item ${active ? 'active' : ''}`}
+                    >
+                      <item.icon size={17} strokeWidth={active ? 2.5 : 2} />
+                      <span>{item.name}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+
+              <div className="p-4 border-t border-gray-100">
+                <button
+                  onClick={() => { localStorage.clear(); router.push('/'); }}
+                  className="sidebar-item w-full hover:bg-red-50 hover:text-red-500"
+                >
+                  <LogOut size={16} /> Sign Out
+                </button>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
+
+      {/* Main Content */}
+      <main className={`flex-1 transition-all duration-300 ${collapsed ? 'lg:pl-16' : 'lg:pl-60'} pt-14 lg:pt-0`}>
+        {children}
+      </main>
     </div>
   );
 }
