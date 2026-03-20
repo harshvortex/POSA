@@ -33,6 +33,9 @@ public class CandidateProfile {
 
     @Column(columnDefinition = "TEXT")
     private String techStack;
+    
+    @Column(columnDefinition = "TEXT")
+    private String summary;
 
     @Column(columnDefinition = "TEXT")
     private String topProjects;

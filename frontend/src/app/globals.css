@@ -1,14 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #09090b;
-  --foreground: #fafafa;
-  --primary: #3b82f6;
-  --secondary: #6366f1;
-  --muted: #18181b;
-  --accent: #27272a;
-  --glass: rgba(24, 24, 27, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --background: #ffffff;
+  --foreground: #18181b;
+  --primary: #6366f1;
+  --secondary: #ec4899;
+  --muted: #f4f4f5;
+  --accent: #fdf2f8;
+  --glass: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --radius: 2rem;
 }
 
 @theme inline {
@@ -30,15 +31,15 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  overflow-x: hidden;
+  letter-spacing: -0.01em;
 }
 
 .glass-card {
   background: var(--glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius);
 }
 
 .gradient-text {
@@ -58,7 +59,22 @@ body {
   transform: translate(-50%, 0);
   width: 100vw;
   height: 60vh;
-  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(236, 72, 153, 0.05) 0%, transparent 70%);
   z-index: -1;
   pointer-events: none;
+}
+
+input, select, textarea {
+  background: #fdfdfd !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  border-radius: 1rem !important;
+}
+
+button {
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:active {
+  transform: scale(0.97);
 }

@@ -3,133 +3,150 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Github, Play, ArrowRight, ShieldCheck, Cpu, Briefcase } from 'lucide-react';
+import { Heart, Play, ArrowRight, ShieldCheck, Cpu, Briefcase, Sparkles, Smile, Target, TrendingUp } from 'lucide-react';
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => setScrolled(window.scrollY > 30);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <div className="relative min-h-screen">
-      <div className="hero-glow" />
+    <div className="relative min-h-screen bg-white text-zinc-900 overflow-x-hidden">
+      <div className="hero-glow opacity-30" />
       
-      {/* Navbar */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'glass-card py-3 translate-y-2 mx-auto max-w-[90%] left-0 right-0 rounded-2xl border' : 'py-6'}`}>
-        <div className="container mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
-              <ShieldCheck className="text-white w-5 h-5" />
+      {/* Humanistic Floating Navbar */}
+      <nav className={`fixed top-6 left-1/2 -translate-x-1/2 w-[90%] md:w-[800px] z-50 transition-all duration-500 rounded-3xl border ${scrolled ? 'bg-white/80 backdrop-blur-xl shadow-2xl shadow-rose-200/20 py-3 scale-100' : 'bg-transparent border-transparent py-5 scale-105'}`}>
+        <div className="container mx-auto px-8 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
+               <ShieldCheck className="text-indigo-600 w-6 h-6" />
             </div>
-            <span className="text-xl font-bold tracking-tight">PoSA</span>
+            <span className="text-2xl font-black tracking-tighter">PoSA</span>
           </div>
           
+          <div className="hidden lg:flex gap-10 text-sm font-bold text-zinc-500">
+             <Link href="#features" className="hover:text-indigo-600 transition-colors">How it works</Link>
+             <Link href="#solutions" className="hover:text-indigo-600 transition-colors">For Talent</Link>
+             <Link href="#recruiter" className="hover:text-indigo-600 transition-colors">For Teams</Link>
+          </div>
+
           <div className="flex gap-4 items-center">
-            <Link href="/login" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link href="/login" className="text-sm font-black text-indigo-600 px-4 py-2 hover:bg-indigo-50 rounded-xl transition-all">
               Sign In
             </Link>
-            <Link href="/register" className="px-5 py-2 rounded-xl gradient-bg text-white text-sm font-semibold hover:opacity-90 transition-all shadow-lg shadow-blue-500/20">
+            <Link href="/register" className="px-6 py-3 rounded-2xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20 active:scale-95">
               Get Started
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <main className="container mx-auto px-6 pt-40 pb-20">
-        <div className="flex flex-col items-center text-center max-w-4xl mx-auto mb-20">
+      {/* Modern Hero Section */}
+      <main className="container mx-auto px-6 pt-48 pb-20 relative z-10">
+        <div className="flex flex-col lg:flex-row items-center gap-16">
+          <div className="lg:w-1/2 text-left space-y-8">
+            <motion.div 
+               initial={{ opacity: 0, x: -20 }} 
+               animate={{ opacity: 1, x: 0 }}
+               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-50 text-rose-600 text-xs font-black uppercase tracking-wider border border-rose-100"
+            >
+               <Sparkles size={14} /> Human-Ai Synergy
+            </motion.div>
+            
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+              className="text-6xl md:text-7xl font-[900] tracking-tight leading-[0.95] text-zinc-900"
+            >
+              Verify <span className="text-indigo-600">Talent</span> with Heart.
+            </motion.h1>
+            
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-xl text-zinc-500 leading-relaxed max-w-lg font-medium"
+            >
+              We don&apos;t just score code. We understand potential. Our AI creates a human-centered "Skill DNA" based on your actual work.
+            </motion.p>
+            
+            <div className="flex flex-wrap gap-4 pt-4">
+               <Link href="/register" className="group px-8 py-5 rounded-[2rem] bg-zinc-900 h-fit hover:bg-indigo-600 text-white font-black text-lg transition-all shadow-2xl shadow-indigo-200 flex items-center gap-3">
+                 Build Your DNA <ArrowRight className="group-hover:translate-x-1" />
+               </Link>
+               <div className="flex items-center gap-4 px-6 border-l-2 border-zinc-100">
+                  <div className="flex -space-x-3">
+                     {[1, 2, 3].map(i => <div key={i} className="w-10 h-10 rounded-full bg-zinc-200 border-2 border-white" />)}
+                  </div>
+                  <div className="text-xs font-black text-zinc-400 uppercase tracking-widest">Joined by 1.2k+ Engineers</div>
+               </div>
+            </div>
+          </div>
+
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-xs font-bold uppercase tracking-widest mb-6"
+             initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }}
+             className="lg:w-1/2 relative"
           >
-            <Cpu className="w-3 h-3" /> AI-Driven Skill Analysis
-          </motion.div>
-          
-          <motion.h1 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-5xl md:text-7xl font-extrabold leading-tight mb-8"
-          >
-            Verify Technical <span className="gradient-text">DNA</span> with Confidence.
-          </motion.h1>
-          
-          <motion.p 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg text-gray-400 mb-10 max-w-2xl leading-relaxed"
-          >
-            PoSA uses Hugging Face AI to analyze GitHub portfolios and conduct automated technical interviews. Zero friction, total transparency.
-          </motion.p>
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-wrap gap-4 justify-center"
-          >
-            <Link href="/register" className="group flex items-center gap-2 px-8 py-4 rounded-2xl gradient-bg text-white font-bold text-lg hover:scale-105 transition-all shadow-xl shadow-blue-500/25">
-              Launch Dashboard <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <button className="flex items-center gap-2 px-8 py-4 rounded-2xl glass-card font-bold text-lg hover:border-gray-500 transition-all">
-              <Play className="fill-current w-4 h-4" /> Watch Demo
-            </button>
+             <div className="relative rounded-[4rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] group">
+                <img 
+                  src="/posa_humanistic_hero.png" 
+                  alt="Humanistic AI Collaboration" 
+                  className="w-full h-auto transform group-hover:scale-105 transition-all duration-1000"
+                />
+             </div>
+             <div className="absolute -bottom-10 -left-10 glass-card p-6 border shadow-indigo-100 border-indigo-100 w-64 animate-bounce-slow">
+                <div className="flex gap-4 items-center">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-500 text-white flex items-center justify-center font-black text-xl shadow-lg">94</div>
+                  <div>
+                    <h4 className="text-xs font-black uppercase text-zinc-400">Match Score</h4>
+                    <p className="text-sm font-bold text-zinc-900">Highly Capable Senior Java</p>
+                  </div>
+                </div>
+             </div>
           </motion.div>
         </div>
 
-        {/* Feature Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-32">
+        {/* Improved Feature Cards */}
+        <div id="features" className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-48">
           <FeatureCard 
-            icon={<Github className="w-6 h-6 text-blue-400" />}
-            title="Portfolio Analysis"
-            desc="Deep repo scanning to calculate Skill DNA based on stars, contributions, and stack diversity."
-            delay={0.4}
+            icon={<Smile className="text-rose-500" />}
+            bg="bg-rose-50"
+            title="Approachable Analysis"
+            desc="Instead of robotic metrics, we generate a professional career story from your repositories."
           />
           <FeatureCard 
-            icon={<Cpu className="w-6 h-6 text-purple-400" />}
-            title="AI Interrogation"
-            desc="The Viva system conducts a 5-question technical interview using Llama-3 to verify underlying knowledge."
-            delay={0.5}
+            icon={<Target className="text-indigo-500" />}
+            bg="bg-indigo-50"
+            title="Real-time Interrogation"
+            desc="A human-styled conversation that verifies depth without the stress of whiteboard coding."
           />
           <FeatureCard 
-            icon={<Briefcase className="w-6 h-6 text-indigo-400" />}
-            title="Smarter Hiring"
-            desc="Recruiters get a verified leaderboard of candidates with detailed job-fit and growth scores."
-            delay={0.6}
+            icon={<TrendingUp className="text-emerald-500" />}
+            bg="bg-emerald-50"
+            title="Growth & Fit"
+            desc="We score your trajectory, showing recruiters where you excel and how you&apos;ll evolve."
           />
         </div>
       </main>
 
-      <footer className="border-t border-white/5 py-10 mt-20 text-center text-gray-500 text-sm">
-        &copy; 2024 Proof of Skill Analysis (PoSA). Powered by Hugging Face.
+      <footer className="py-20 text-center text-zinc-400 border-t border-zinc-50 relative z-10 bg-zinc-50/30">
+        <p className="text-xs font-black uppercase tracking-[0.2em]">Build with heart &bull; powered by AI</p>
       </footer>
     </div>
   );
 }
 
-function FeatureCard({ icon, title, desc, delay }: any) {
+function FeatureCard({ icon, title, desc, bg }: any) {
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
-      className="glass-card p-8 rounded-3xl hover:border-white/20 transition-all group"
-    >
-      <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+    <div className="p-10 rounded-[3rem] bg-white border border-zinc-100 hover:border-indigo-100 hover:shadow-2xl hover:shadow-indigo-200/20 transition-all group">
+      <div className={`w-14 h-14 rounded-3xl ${bg} flex items-center justify-center mb-10 transition-transform group-hover:scale-110`}>
         {icon}
       </div>
-      <h3 className="text-xl font-bold mb-3">{title}</h3>
-      <p className="text-gray-400 leading-relaxed text-sm">
+      <h3 className="text-2xl font-black mb-4 tracking-tight">{title}</h3>
+      <p className="text-zinc-500 leading-relaxed font-medium">
         {desc}
       </p>
-    </motion.div>
+    </div>
   );
 }

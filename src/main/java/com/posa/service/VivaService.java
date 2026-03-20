@@ -20,8 +20,9 @@ public class VivaService {
     @Value("${huggingface.api.url}")
     private String hfUrl;
 
-    @Value("${huggingface.model.id}")
+    @Value("${huggingface.model.id:meta-llama/Meta-Llama-3-70B-Instruct}")
     private String modelId;
+
 
     @Value("${app.demo-mode:false}")
     private boolean demoMode;
@@ -109,7 +110,36 @@ public class VivaService {
 
 
 
+    public Map<String, Object> analyzeGithubPortfolio(String username, List<Map<String, String>> repos) {
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("Analyze this GitHub portfolio for user '").append(username).append("'.\nRepositories:\n");
+        for (var r : repos) {
+            prompt.append("- ").append(r.get("name")).append(" (").append(r.get("lang")).append("): ").append(r.get("desc")).append("\n");
+        }
+        prompt.append("\nReturn ONLY a JSON object with: skills (map of lang/skill to percentage 0-100), techStack (list of strings), summary (short professional bio).");
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("inputs", prompt.toString());
+        body.put("parameters", Map.of("max_new_tokens", 800, "return_full_text", false));
+
+        try {
+            List<Map<String, Object>> resList = getClient().post()
+                    .uri(hfUrl + modelId)
+                    .bodyValue(body)
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
+                    .block();
+
+            String content = extractJson((String) resList.get(0).get("generated_text"));
+            return mapper.readValue(content, new TypeReference<Map<String, Object>>() {});
+        } catch (Exception e) {
+            System.err.println("GitHub Portfolio LLM Error: " + e.getMessage());
+        }
+        return null;
+    }
+
     private String extractJson(String text) {
+
         if (text == null) return "";
         int startArr = text.indexOf("[");
         int startObj = text.indexOf("{");

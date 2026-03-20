@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ArrowLeft, User, Mail, Lock, ShieldCheck, Briefcase } from 'lucide-react';
+import { ArrowLeft, User, Mail, Lock, ShieldCheck, Briefcase, Smile, Heart } from 'lucide-react';
 import api from '@/lib/api';
 
 export default function Register() {
@@ -37,85 +37,85 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center py-20">
-      <div className="hero-glow" />
-      <Link href="/" className="fixed top-8 left-8 flex items-center gap-2 text-sm text-gray-500 hover:text-white transition-colors">
+    <div className="min-h-screen relative flex items-center justify-center py-20 bg-zinc-50/50">
+      <div className="hero-glow opacity-20" />
+      <Link href="/" className="fixed top-12 left-12 flex items-center gap-2 text-sm font-black text-zinc-400 hover:text-indigo-600 transition-colors uppercase tracking-widest leading-none">
         <ArrowLeft className="w-4 h-4" /> Back to Home
       </Link>
       
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="glass-card p-10 rounded-[2.5rem] w-full max-w-xl shadow-2xl relative overflow-hidden"
+        className="glass-card p-12 rounded-[4rem] w-full max-w-2xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] border-white/80 bg-white/90"
       >
-        <h2 className="text-3xl font-extrabold text-center mb-2">Create Account</h2>
-        <p className="text-center text-gray-400 text-sm mb-10">Choose your path and start verifying skills.</p>
+        <h2 className="text-4xl font-[1000] text-center mb-2 tracking-tight">Join the Network.</h2>
+        <p className="text-center text-zinc-400 text-sm mb-12 font-medium">Define your DNA and connect with professional opportunities.</p>
         
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-3 rounded-xl text-xs font-medium mb-6 text-center">
+          <div className="bg-rose-50 border border-rose-100 text-rose-600 p-4 rounded-3xl text-sm font-bold mb-8 text-center">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleRegister} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="md:col-span-2 space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-gray-500 pl-2">Full Name</label>
+        <form onSubmit={handleRegister} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="md:col-span-2 space-y-1">
+            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 pl-4">Your Name</label>
             <div className="relative group">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-blue-500" />
+              <User className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
               <input 
                 type="text" required 
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 focus:ring-2 focus:ring-blue-500/30 transition-all text-sm"
-                placeholder="John Doe"
+                className="w-full bg-zinc-50 border-zinc-100 rounded-[2rem] py-5 pl-14 pr-6 outline-none focus:ring-4 focus:ring-indigo-100/50 focus:border-indigo-200 transition-all font-bold text-sm"
+                placeholder="Jane Smith"
                 value={name} onChange={(e) => setName(e.target.value)}
               />
             </div>
           </div>
 
-          <div className="md:col-span-2 space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-gray-500 pl-2">Email</label>
-            <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <div className="md:col-span-2 space-y-1">
+            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 pl-4">Email Handle</label>
+            <div className="relative group">
+              <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
               <input 
                 type="email" required 
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 focus:ring-2 focus:ring-blue-500/30 transition-all text-sm"
-                placeholder="john@example.com"
+                className="w-full bg-zinc-50 border-zinc-100 rounded-[2rem] py-5 pl-14 pr-6 outline-none focus:ring-4 focus:ring-indigo-100/50 focus:border-indigo-200 transition-all font-bold text-sm"
+                placeholder="you@email.com"
                 value={email} onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-gray-500 pl-2">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 pl-4">Create Password</label>
+            <div className="relative group">
+              <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
               <input 
                 type="password" required 
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 focus:ring-2 focus:ring-blue-500/30 transition-all text-sm"
+                className="w-full bg-zinc-50 border-zinc-100 rounded-[2rem] py-5 pl-14 pr-6 outline-none focus:ring-4 focus:ring-indigo-100/50 focus:border-indigo-200 transition-all font-bold text-sm"
                 placeholder="••••••••"
                 value={password} onChange={(e) => setPassword(e.target.value)}
               />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-gray-500 pl-2">I am a...</label>
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 pl-4">Account Role</label>
             <select 
-              className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 focus:ring-2 focus:ring-blue-500/30 transition-all text-sm appearance-none outline-none"
+              className="w-full bg-zinc-50 border-zinc-100 rounded-[2rem] py-5 px-6 focus:ring-4 focus:ring-indigo-100/50 focus:border-indigo-200 transition-all font-bold text-sm appearance-none outline-none cursor-pointer"
               value={role} onChange={(e) => setRole(e.target.value)}
             >
-              <option value="CANDIDATE" className="bg-zinc-900">Candidate</option>
-              <option value="RECRUITER" className="bg-zinc-900">Recruiter</option>
+              <option value="CANDIDATE">I want to be Hired</option>
+              <option value="RECRUITER">I want to Hire Talent</option>
             </select>
           </div>
 
           {role === 'RECRUITER' && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="md:col-span-2 space-y-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-gray-500 pl-2">Company Name</label>
-              <div className="relative">
-                <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="md:col-span-2 space-y-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 pl-4">Professional Organization</label>
+              <div className="relative group">
+                <Briefcase className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
                 <input 
                   type="text" required 
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 focus:ring-2 focus:ring-blue-500/30 transition-all text-sm"
+                  className="w-full bg-zinc-50 border-zinc-100 rounded-[2rem] py-5 pl-14 pr-6 outline-none focus:ring-4 focus:ring-indigo-100/50 focus:border-indigo-200 transition-all font-bold text-sm"
                   placeholder="Acme Corp"
                   value={company} onChange={(e) => setCompany(e.target.value)}
                 />
@@ -126,14 +126,14 @@ export default function Register() {
           <button 
             type="submit" 
             disabled={loading}
-            className="md:col-span-2 w-full py-4 rounded-2xl gradient-bg text-white font-extrabold text-lg transition-all shadow-xl shadow-blue-500/30 disabled:opacity-50 mt-4"
+            className="md:col-span-2 w-full py-5 rounded-[2rem] bg-zinc-900 text-white font-[900] text-xl hover:bg-rose-500 active:scale-95 transition-all shadow-2xl shadow-rose-100 disabled:opacity-50 mt-4"
           >
-            {loading ? 'Creating Account...' : 'Sign Up'}
+            {loading ? 'Processing...' : 'Complete Registration'}
           </button>
         </form>
         
-        <p className="text-center text-gray-500 text-sm mt-10">
-          Already have an account? <Link href="/login" className="text-blue-400 font-bold hover:underline">Sign In</Link>
+        <p className="text-center text-zinc-400 text-sm mt-12 font-medium">
+          Already a member? <Link href="/login" className="text-indigo-600 font-black hover:underline">Sign In Instead</Link>
         </p>
       </motion.div>
     </div>

@@ -19,6 +19,8 @@ public class GitHubService {
     @Value("${app.demo-mode:false}")
     private boolean demoMode;
 
+    @Autowired private VivaService vivaService;
+
     private WebClient getClient() {
         return WebClient.builder()
                 .baseUrl(baseUrl)
@@ -38,7 +40,8 @@ public class GitHubService {
                     .bodyToMono(Map.class)
                     .block();
         } catch (Exception e) {
-            throw new RuntimeException("GitHub user not found: " + username);
+            System.err.println("GitHub User Info Error: " + e.getMessage());
+            return Map.of("login", username, "name", username);
         }
     }
 
@@ -46,13 +49,13 @@ public class GitHubService {
     public List<Map<String, Object>> getRepositories(String username) {
         if (demoMode && (token == null || token.contains("your_github_token"))) {
             return List.of(
-                Map.of("name", "DemoRepo1", "stargazers_count", 10, "language", "Java"),
-                Map.of("name", "DemoRepo2", "stargazers_count", 5, "language", "Python")
+                Map.of("name", "DemoRepo1", "stargazers_count", 10, "language", "Java", "description", "A complex Java system"),
+                Map.of("name", "DemoRepo2", "stargazers_count", 5, "language", "Python", "description", "AI data processing scripts")
             );
         }
         try {
             List list = getClient().get()
-                    .uri("/users/" + username + "/repos?sort=updated&per_page=50")
+                    .uri("/users/" + username + "/repos?sort=updated&per_page=30")
                     .retrieve()
                     .bodyToFlux(Map.class)
                     .collectList()
@@ -68,7 +71,7 @@ public class GitHubService {
         List<Map<String, Object>> repos = getRepositories(username);
         int totalStars = 0;
         Map<String, Integer> langCount = new LinkedHashMap<>();
-        List<Map<String, Object>> topProjects = new ArrayList<>();
+        List<Map<String, String>> repoSummaries = new ArrayList<>();
 
         for (Map<String, Object> repo : repos) {
             Object starsObj = repo.get("stargazers_count");
@@ -76,38 +79,28 @@ public class GitHubService {
             totalStars += stars;
 
             String lang = (String) repo.get("language");
-            if (lang != null && !lang.isBlank()) {
-                langCount.merge(lang, 1, Integer::sum);
-            }
-
-            Map<String, Object> proj = new LinkedHashMap<>();
-            proj.put("name", repo.get("name"));
-            proj.put("stars", stars);
-            proj.put("language", lang != null ? lang : "Unknown");
-            proj.put("url", repo.get("html_url"));
-            proj.put("description", repo.get("description"));
-            proj.put("forks", repo.getOrDefault("forks_count", 0));
-            topProjects.add(proj);
+            if (lang != null && !lang.isBlank()) langCount.merge(lang, 1, Integer::sum);
+            
+            repoSummaries.add(Map.of(
+                "name", (String)repo.get("name"),
+                "lang", lang != null ? lang : "Unknown",
+                "desc", repo.get("description") != null ? (String)repo.get("description") : "No description"
+            ));
         }
 
-        // Sort top projects by stars
-        topProjects.sort((a, b) -> Integer.compare((Integer) b.get("stars"), (Integer) a.get("stars")));
+        // Use LLM for "Better Detection" of skills if not in demo mode
+        Map<String, Object> llmAnalysis = null;
+        if (!demoMode && token != null && !token.contains("your_github_token")) {
+           llmAnalysis = vivaService.analyzeGithubPortfolio(username, repoSummaries);
+        }
 
-        // Calculate skill percentages from language frequency
-        int totalLangRepos = langCount.values().stream().mapToInt(Integer::intValue).sum();
-        Map<String, Integer> skillPercentages = new LinkedHashMap<>();
-        langCount.entrySet().stream()
-                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                .limit(8)
-                .forEach(e -> {
-                    int pct = totalLangRepos > 0 ? (int) Math.round((e.getValue() * 100.0) / totalLangRepos) : 0;
-                    skillPercentages.put(e.getKey(), pct);
-                });
+        Map<String, Integer> skillPercentages = llmAnalysis != null 
+                ? (Map<String, Integer>) llmAnalysis.get("skills") 
+                : calculateFallbackPercentages(langCount);
 
-        List<String> techStack = new ArrayList<>(langCount.keySet().stream()
-                .sorted(Comparator.comparingInt(langCount::get).reversed())
-                .limit(10)
-                .toList());
+        List<String> techStack = llmAnalysis != null 
+                ? (List<String>) llmAnalysis.get("techStack") 
+                : new ArrayList<>(langCount.keySet());
 
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("username", username);
@@ -115,8 +108,15 @@ public class GitHubService {
         result.put("totalStars", totalStars);
         result.put("skillPercentages", skillPercentages);
         result.put("techStack", techStack);
-        result.put("topProjects", topProjects.subList(0, Math.min(5, topProjects.size())));
+        result.put("summary", llmAnalysis != null ? llmAnalysis.get("summary") : "Analysis based on repository metadata.");
         return result;
+    }
+
+    private Map<String, Integer> calculateFallbackPercentages(Map<String, Integer> langCount) {
+        int total = langCount.values().stream().mapToInt(Integer::intValue).sum();
+        Map<String, Integer> pct = new LinkedHashMap<>();
+        langCount.forEach((k, v) -> pct.put(k, total > 0 ? (int) Math.round((v * 100.0) / total) : 0));
+        return pct;
     }
 
     public double calculateSkillScore(Map<String, Object> data) {
@@ -126,13 +126,15 @@ public class GitHubService {
         Map<String, Integer> skills = (Map<String, Integer>) data.getOrDefault("skillPercentages", Map.of());
         int langDiversity = skills.size();
 
-        double repoScore = Math.min(repos * 2.0, 35);
-        double starScore = Math.min(stars * 1.5, 25);
-        double diversityScore = Math.min(langDiversity * 3.0, 15);
-        double base = 25;
+        double repoScore = Math.min(repos * 2.0, 30);
+        double starScore = Math.min(stars * 1.5, 20);
+        double diversityScore = Math.min(langDiversity * 5.0, 20);
+        double base = 30; // Better starting point
         double score = repoScore + starScore + diversityScore + base;
         return Math.min(Math.round(score * 10.0) / 10.0, 100.0);
     }
+}
+
 }
 
 }

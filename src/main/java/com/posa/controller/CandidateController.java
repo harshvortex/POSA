@@ -37,7 +37,9 @@ profile.setTotalStars((Integer)analysis.get("totalStars"));
 profile.setSkillScore(skillScore);profile.setJobFitScore(skillScore*0.95);profile.setGrowthScore(skillScore*0.97);
 profile.setSkillDna(mapper.writeValueAsString(analysis.get("skillPercentages")));
 profile.setTechStack(mapper.writeValueAsString(analysis.get("techStack")));
+profile.setSummary((String)analysis.get("summary"));
 profile.setTopProjects(mapper.writeValueAsString(analysis.get("topProjects")));
+
 profile.setIsVerified(true);profile.setLastSynced(LocalDateTime.now());
 profileRepository.save(profile);user.setGithubUsername(githubUsername);userRepository.save(user);
 return ResponseEntity.ok(Map.of("message","GitHub connected!","profile",profile));

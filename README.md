@@ -12,7 +12,8 @@ PoSA is an AI-driven platform that analyzes technical skills through GitHub inte
 ## Technology Stack
 
 - **Backend**: Spring Boot 3.3.0 (Java 21)
-- **AI/LLM**: Hugging Face Inference API
+- **AI/LLM**: Hugging Face Inference API (Meta-Llama-3-70B-Instruct)
+- **GitHub Intelligence**: LLM-driven Portfolio Analysis (Smarter Skill Detection)
 - **Database**: MySQL 8.x
 - **Security**: JWT (JSON Web Token) with Spring Security
 - **Data**: Spring Data JPA
