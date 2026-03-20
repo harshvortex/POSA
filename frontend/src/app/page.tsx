@@ -15,121 +15,116 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#020617] text-white selection:bg-blue-500/30 overflow-x-hidden font-sans">
-      <div className="gradient-mesh" />
-      <div className="scan-line" />
+    <div className="relative min-h-screen bg-white text-black selection:bg-blue-500/10 overflow-x-hidden font-sans">
+      <div className="mesh-glow" />
       
-      {/* Redesigned Floating Cyber-Navbar */}
-      <nav className={`fixed top-8 left-1/2 -translate-x-1/2 w-[90%] md:w-[950px] z-[200] transition-all duration-700 rounded-2xl border ${scrolled ? 'bg-slate-900/40 backdrop-blur-3xl shadow-2xl border-white/5 py-4 scale-100' : 'bg-transparent border-transparent py-8 scale-105'}`}>
+      {/* Redesigned Floating Minimal Navbar */}
+      <nav className={`fixed top-8 left-1/2 -translate-x-1/2 w-[90%] md:w-[900px] z-[200] transition-all duration-700 rounded-2xl ${scrolled ? 'bg-white/80 backdrop-blur-3xl shadow-xl shadow-black/2 py-4 border border-black/2' : 'bg-transparent py-8 border-transparent'}`}>
         <div className="container mx-auto px-10 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-             <div className="w-12 h-12 rounded-xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shadow-2xl shadow-blue-500/10">
-               <Shield size={24} strokeWidth={2.5} />
+          <div className="flex items-center gap-3">
+             <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/10">
+               <ShieldCheck size={18} strokeWidth={2.5} />
              </div>
-             <span className="text-3xl font-black tracking-tighter glow-text">PoSA.</span>
+             <span className="text-xl font-bold tracking-tight">PoSA</span>
           </div>
           
-          <div className="hidden lg:flex gap-12 text-[10px] font-black uppercase tracking-[0.3em] text-white/30">
-             <Link href="#how" className="hover:text-blue-400 transition-colors">Protocol</Link>
-             <Link href="#how" className="hover:text-blue-400 transition-colors">Talent</Link>
-             <Link href="#how" className="hover:text-blue-400 transition-colors">Verify</Link>
+          <div className="hidden lg:flex gap-10 text-xs font-semibold text-gray-500">
+             <Link href="#how" className="hover:text-black transition-colors">Platform</Link>
+             <Link href="#how" className="hover:text-black transition-colors">Talent</Link>
+             <Link href="#how" className="hover:text-black transition-colors">Verify</Link>
           </div>
 
           <div className="flex gap-4">
-            <Link href="/login" className="px-6 py-3 rounded-xl border border-white/5 text-xs font-black uppercase tracking-widest hover:bg-white/5 transition-all active:scale-95">
+            <Link href="/login" className="px-5 py-2.5 rounded-xl border border-gray-100 text-xs font-semibold hover:bg-gray-50 transition-all active:scale-95">
               Portal
             </Link>
-            <Link href="/register" className="px-8 py-4 rounded-xl bg-blue-600 text-white text-xs font-black uppercase tracking-[0.2em] hover:bg-blue-700 transition-all shadow-2xl shadow-blue-600/20 active:scale-95">
-              Sync DNA
+            <Link href="/register" className="px-7 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/10 active:scale-95">
+              Get Started
             </Link>
           </div>
         </div>
       </nav>
 
-      <main className="container mx-auto px-8 pt-72 pb-48 relative z-10 text-center flex flex-col items-center">
+      <main className="container mx-auto px-8 pt-64 pb-48 relative z-10 text-center flex flex-col items-center">
          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-            className="px-6 py-2 rounded-full border border-blue-500/10 mb-12 flex items-center gap-3 font-black text-[10px] uppercase tracking-[0.4em] bg-blue-500/5 text-blue-400 shadow-2xl shadow-blue-500/5"
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            className="px-4 py-1.5 rounded-full border border-gray-100 mb-10 flex items-center gap-2 font-semibold text-xs text-gray-400 bg-gray-50/50"
          >
-            <div className="w-2 h-2 rounded-full bg-blue-500 animate-ping" /> Security Protocol 4.0 ACTIVE
+            <div className="w-1.5 h-1.5 rounded-full bg-blue-500" /> AI-Verified Technical Protocol 2026
          </motion.div>
          
          <motion.h1 
-           initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
-           className="text-7xl md:text-[9rem] font-[1000] tracking-[-0.05em] leading-[0.85] mb-16 max-w-6xl capitalize glow-text"
+           initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}
+           className="text-6xl md:text-8xl font-bold tracking-[-0.03em] leading-[1.05] mb-12 max-w-4xl"
          >
-           Verified <br/> Technical <span className="text-blue-500 italic">Genesis.</span>
+           Technical <span className="text-blue-600 italic">Proof</span> over Paper Resumes.
          </motion.h1>
          
          <motion.p 
-           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
-           className="text-xl md:text-2xl text-slate-400 leading-relaxed max-w-3xl font-medium mb-20 tracking-tight"
+           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+           className="text-xl md:text-[1.35rem] text-gray-500 leading-relaxed max-w-2xl font-medium mb-16 tracking-tight"
          >
-           Resumes are legacy data. PoSA uses **Llama-3-70B Verification** to ingest your total GitHub history into a tamper-proof professional DNA.
+           PoSA ingest your GitHub history using high-intelligence LLMs to decode your actual code into a tamper-proof professional rank.
          </motion.p>
          
-         <div className="flex flex-wrap justify-center gap-8 mb-48">
-            <Link href="/register" className="group px-14 py-8 rounded-2xl bg-white text-black font-[1000] text-3xl transition-all hover:bg-blue-600 hover:text-white active:scale-95 shadow-2xl flex items-center gap-6 relative overflow-hidden">
-               <div className="absolute top-0 right-0 w-12 h-12 bg-white/10 group-hover:block hidden animate-ping" />
-               Build Your Protocol <ArrowRight size={38} strokeWidth={4} className="group-hover:translate-x-2 transition-transform" />
+         <div className="flex flex-wrap justify-center gap-6 mb-48">
+            <Link href="/register" className="group px-10 py-5 rounded-xl bg-black text-white font-bold text-lg transition-all hover:bg-blue-600 active:scale-95 shadow-2xl flex items-center gap-3">
+               Connect GitHub <ArrowRight size={20} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link href="/login" className="px-10 py-5 rounded-xl bg-white border border-gray-200 text-black font-bold text-lg transition-all hover:bg-gray-50 shadow-sm active:scale-95">
+              Recruiter Hub
             </Link>
          </div>
 
-         {/* Cyber-Grid Features */}
-         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 w-full max-w-7xl pt-24 border-t border-white/5 relative">
-            <div className="absolute -top-px left-1/2 -translate-x-1/2 w-32 h-px bg-blue-500 shadow-[0_0_20px_blue]" />
+         {/* Bento-Grid Features */}
+         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 w-full max-w-6xl pt-24">
             <Feature 
-               icon={<Cpu size={36} />} 
-               title="Llama-3 Detection" 
-               desc="Deep-layer repository analysis detecting architecture patterns, security maturity, and execution depth." 
+               className="md:col-span-8 h-[400px]"
+               icon={<Cpu size={28} />} 
+               title="Genetic Detection" 
+               desc="Deep-layer repository analysis detecting architecture patterns, security maturity, and execution depth. We don't just count languages; we see code quality." 
             />
             <Feature 
-               icon={<Play size={36} />} 
-               title="Reactive Viva" 
-               desc="High-fidelity interrogation sessions designed to explore technical boundaries in real-time." 
+               className="md:col-span-4 h-[400px]"
+               icon={<Play size={28} />} 
+               title="Real-Time Viva" 
+               desc="Interrogation sessions designed to explore absolute technical limits." 
             />
             <Feature 
-               icon={<Target size={36} />} 
-               title="Market Precision" 
-               desc="Instant alignment with high-value positions based on verified genetic skill markup." 
+               className="md:col-span-4 h-[400px]"
+               icon={<Target size={28} />} 
+               title="Market Pulse" 
+               desc="Direct alignment with high-value teams based on genetic skill markup." 
+            />
+            <Feature 
+               className="md:col-span-8 h-[400px]"
+               icon={<ShieldCheck size={28} />} 
+               title="Secure Identification" 
+               desc="Tamper-proof professional identity built on verified open-source contributions. Your work is your authority, forever." 
             />
          </div>
       </main>
 
-      {/* Cyber-Social Proof */}
-      <div className="py-24 border-t border-white/5 bg-slate-900/20 backdrop-blur-md">
-         <div className="container mx-auto px-10 text-center">
-            <div className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-500 mb-12">Secured Network Partners</div>
-            <div className="flex flex-wrap justify-center gap-20 opacity-30 grayscale hover:grayscale-0 transition-all duration-700">
-               <LogoPlaceholder hideOnMobile={false} /> <LogoPlaceholder hideOnMobile={false} /> <LogoPlaceholder hideOnMobile={true} /> <LogoPlaceholder hideOnMobile={true} />
-            </div>
-         </div>
-      </div>
-
-      <footer className="py-20 text-center border-t border-white/5 relative z-10">
-         <div className="flex justify-center gap-12 mb-8">
-            <Link href="#" className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-400">Security</Link>
-            <Link href="#" className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-400">Documentation</Link>
-            <Link href="#" className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-400">Network</Link>
-         </div>
-         <p className="text-[9px] font-bold text-slate-600 uppercase tracking-[0.4em]">&copy; 2026 PoSA ARCHIVE &bull; VERSION 4.2.0 &bull; ALL RIGHTS RESERVED</p>
+      <footer className="py-24 text-center border-t border-gray-50 bg-[#fafafa]">
+         <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">&copy; 2026 PoSA &bull; PURE INTELLIGENCE DESIGN</div>
       </footer>
     </div>
   );
 }
 
-function Feature({ icon, title, desc }: any) {
+function Feature({ icon, title, desc, className = "md:col-span-4" }: any) {
   return (
-    <div className="cyber-card p-16 text-left group">
-       <div className="w-16 h-16 rounded-xl bg-slate-800 border border-white/5 flex items-center justify-center mb-12 text-blue-400 group-hover:scale-110 group-hover:border-blue-500 transition-all">
-          {icon}
+    <div className={`bento-card p-12 text-left group flex flex-col justify-between ${className}`}>
+       <div>
+         <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center mb-10 text-blue-600 transition-all group-hover:bg-white group-hover:border-blue-200 group-hover:shadow-sm">
+            {icon}
+         </div>
+         <h3 className="text-3xl font-bold mb-4 tracking-tight leading-tight">{title}</h3>
+         <p className="text-gray-500 text-lg leading-relaxed font-medium">{desc}</p>
        </div>
-       <h3 className="text-4xl font-[1000] mb-4 tracking-tighter leading-none glow-text">{title}</h3>
-       <p className="text-slate-400 text-lg leading-relaxed font-medium">{desc}</p>
+       <div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+          <ArrowRight className="text-gray-300" />
+       </div>
     </div>
   );
-}
-
-function LogoPlaceholder({ hideOnMobile }: { hideOnMobile: boolean }) {
-  return <div className={`text-2xl font-black uppercase tracking-[0.2em] transform -skew-x-12 ${hideOnMobile ? 'hidden lg:block' : ''}`}>STITCH.DEV</div>;
 }
