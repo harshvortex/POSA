@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ShieldCheck, Mail, Lock, User, Briefcase, ArrowRight, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { ShieldCheck, ArrowRight, Eye, EyeOff, User, Briefcase, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import api from '@/lib/api';
 
@@ -22,163 +22,164 @@ export default function Register() {
     try {
       await api.post('/auth/register', { ...form, role });
       router.push('/login');
-    } catch (err) {
+    } catch {
       setError('Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
+  const BENEFITS = [
+    { title: 'No résumé required', desc: 'Your GitHub history speaks volumes.' },
+    { title: 'AI-verified scores', desc: 'Llama-3 reads your actual code, no bias.' },
+    { title: 'Recruiter visibility', desc: 'Top companies search verified profiles.' },
+    { title: 'Scores improve over time', desc: 'Build more, rank higher automatically.' },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#f8fafc] grid lg:grid-cols-2">
-      {/* Left – Form */}
-      <div className="flex flex-col justify-center px-8 py-16 lg:px-20">
-        <Link href="/" className="flex items-center gap-2 mb-16">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-            <ShieldCheck size={16} strokeWidth={2.5} className="text-white" />
+    <div style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '1fr', background: '#f8fafc' }} className="auth-layout">
+      {/* ── LEFT: FORM ── */}
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'clamp(32px, 5vw, 80px) clamp(24px, 6vw, 80px)', maxWidth: 560, width: '100%', margin: '0 auto' }}>
+        <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none', marginBottom: 48 }}>
+          <div style={{ width: 30, height: 30, borderRadius: 9, background: 'linear-gradient(135deg, #4f46e5, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(79,70,229,0.3)' }}>
+            <ShieldCheck size={15} color="white" strokeWidth={2.5} />
           </div>
-          <span className="font-bold text-lg tracking-tight">PoSA</span>
+          <span style={{ fontWeight: 800, fontSize: '1rem', letterSpacing: '-0.02em', color: '#0d1117' }}>PoSA</span>
         </Link>
 
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <div className="label-xs text-indigo-500 mb-3">Create Account</div>
-          <h1 className="display-md mb-2">Build your verified identity.</h1>
-          <p className="text-gray-500 text-sm mb-8">Join PoSA and let your code prove your worth.</p>
+        <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
+          <div className="text-label-colored" style={{ marginBottom: 10 }}>Create account</div>
+          <h1 className="text-h1" style={{ marginBottom: 8 }}>Build your verified identity</h1>
+          <p className="text-sm" style={{ marginBottom: 28 }}>Let your code prove your worth — no résumé needed.</p>
 
           {/* Role Toggle */}
-          <div className="flex gap-3 mb-8 p-1 bg-gray-100 rounded-xl w-fit">
-            {(['CANDIDATE', 'RECRUITER'] as const).map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => setRole(r)}
-                className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
-                  role === r
-                    ? 'bg-white text-indigo-600 shadow-sm'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                {r === 'CANDIDATE' ? <User size={14} /> : <Briefcase size={14} />}
+          <div style={{ display: 'flex', background: '#f1f4f9', borderRadius: 12, padding: 4, gap: 4, marginBottom: 28, width: 'fit-content' }}>
+            {(['CANDIDATE', 'RECRUITER'] as const).map(r => (
+              <button key={r} type="button" onClick={() => setRole(r)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  padding: '7px 16px', borderRadius: 9, border: 'none', cursor: 'pointer',
+                  fontWeight: 600, fontSize: '0.8125rem', transition: 'all 0.2s',
+                  background: role === r ? 'white' : 'transparent',
+                  color: role === r ? '#4f46e5' : '#6b7280',
+                  boxShadow: role === r ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                }}>
+                {r === 'CANDIDATE' ? <User size={13} /> : <Briefcase size={13} />}
                 {r === 'CANDIDATE' ? 'Developer' : 'Recruiter'}
               </button>
             ))}
           </div>
 
           {error && (
-            <div className="mb-6 px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium">
+            <div style={{ padding: '12px 16px', borderRadius: 10, background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.15)', color: '#dc2626', fontSize: '0.875rem', fontWeight: 500, marginBottom: 20 }}>
               {error}
             </div>
           )}
 
-          <form onSubmit={handleRegister} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="label-xs text-gray-500">Full Name</label>
-                <input
-                  type="text" placeholder="Alex Johnson" required
-                  className="form-input"
-                  value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-                />
+          <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }} className="name-email-grid">
+              <div className="field">
+                <label className="field-label">Full name</label>
+                <input type="text" placeholder="Alex Johnson" required className="input"
+                  value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
               </div>
-              <div className="space-y-1.5">
-                <label className="label-xs text-gray-500">Work Email</label>
-                <input
-                  type="email" placeholder="alex@company.com" required
-                  className="form-input"
-                  value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-                />
+              <div className="field">
+                <label className="field-label">Work email</label>
+                <input type="email" placeholder="alex@company.com" required className="input"
+                  value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="label-xs text-gray-500">Password</label>
-              <div className="relative">
-                <input
-                  type={showPass ? 'text' : 'password'}
-                  placeholder="Create a strong password"
-                  required
-                  className="form-input pr-10"
-                  value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
-                />
+            <div className="field">
+              <label className="field-label">Password</label>
+              <div style={{ position: 'relative' }}>
+                <input type={showPass ? 'text' : 'password'} placeholder="Create a strong password" required
+                  className="input" style={{ paddingRight: 40 }}
+                  value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
                 <button type="button" onClick={() => setShowPass(!showPass)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                  style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', display: 'flex', padding: 4 }}>
                   {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
             </div>
 
             {role === 'RECRUITER' && (
-              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-1.5">
-                <label className="label-xs text-gray-500">Company Name</label>
-                <input
-                  type="text" placeholder="Your company" required
-                  className="form-input"
-                  value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })}
-                />
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="field">
+                <label className="field-label">Company name</label>
+                <input type="text" placeholder="Your company" required className="input"
+                  value={form.company} onChange={e => setForm({ ...form, company: e.target.value })} />
               </motion.div>
             )}
 
-            <button
-              type="submit" disabled={loading}
-              className="btn-primary w-full h-11 text-sm mt-2"
-            >
-              {loading ? 'Creating account...' : `Create ${role === 'CANDIDATE' ? 'Developer' : 'Recruiter'} Profile`}
-              {!loading && <ArrowRight size={15} />}
+            <button type="submit" disabled={loading} className="btn btn-primary btn-md" style={{ width: '100%', height: 44, marginTop: 8 }}>
+              {loading ? (
+                <><div className="spinner" />&nbsp;Creating account...</>
+              ) : (
+                <>Create {role === 'CANDIDATE' ? 'Developer' : 'Recruiter'} Profile <ArrowRight size={15} /></>
+              )}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-gray-400">
+          <p style={{ textAlign: 'center', fontSize: '0.875rem', color: '#6b7280', marginTop: 24 }}>
             Already have an account?{' '}
-            <Link href="/login" className="text-indigo-600 font-semibold hover:text-indigo-700 transition-colors">
-              Sign in
-            </Link>
+            <Link href="/login" style={{ color: '#4f46e5', fontWeight: 600, textDecoration: 'none' }}>Sign in</Link>
           </p>
         </motion.div>
       </div>
 
-      {/* Right – Benefits Visual */}
-      <div className="hidden lg:flex flex-col justify-center p-12 bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#0f172a] relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-indigo-600/10 blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-purple-600/10 blur-3xl" />
+      {/* ── RIGHT: BENEFITS ── */}
+      <div className="auth-panel" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 60%, #0f172a 100%)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'clamp(40px, 5vw, 64px)' }}>
+        <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '70%', height: '70%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(79,70,229,0.12) 0%, transparent 70%)' }} />
+        <div style={{ position: 'absolute', bottom: '-15%', left: '-5%', width: '55%', height: '55%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%)' }} />
 
-        <div className="relative z-10 max-w-sm">
-          <div className="label-xs text-indigo-400 mb-6">Why PoSA Works</div>
-          <h2 className="text-3xl font-black text-white tracking-tight leading-tight mb-8">
-            One profile. Infinite opportunities.
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: 400 }}>
+          <div className="text-label" style={{ color: 'rgba(255,255,255,0.3)', marginBottom: 16 }}>Why PoSA</div>
+          <h2 style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: 800, color: 'white', letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: 40 }}>
+            One profile.<br />Infinite opportunities.
           </h2>
 
-          <div className="space-y-5">
-            {[
-              { title: 'No Résumé Required', desc: 'Your GitHub history tells a richer story than any PDF.' },
-              { title: 'AI-Verified Scores', desc: 'Llama-3 reads your actual code—no self-reporting bias.' },
-              { title: 'Direct Recruiter Access', desc: 'Top companies actively search verified PoSA profiles.' },
-              { title: 'Grow Your Score', desc: 'Your profile improves as you build. Code more, rank higher.' },
-            ].map((item) => (
-              <div key={item.title} className="flex gap-4 items-start">
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center mt-0.5">
-                  <CheckCircle size={13} className="text-emerald-400" />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
+            {BENEFITS.map((b, i) => (
+              <motion.div key={b.title}
+                initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 + i * 0.08 }}
+                style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+                <div style={{ flexShrink: 0, width: 22, height: 22, borderRadius: '50%', background: 'rgba(16,185,129,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>
+                  <CheckCircle size={12} color="#34d399" />
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-white">{item.title}</div>
-                  <div className="text-xs text-white/40 mt-0.5 leading-relaxed">{item.desc}</div>
+                  <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'white', marginBottom: 2 }}>{b.title}</div>
+                  <div style={{ fontSize: '0.8125rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.5 }}>{b.desc}</div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
 
-          <div className="mt-10 p-5 rounded-2xl bg-white/5 border border-white/8">
-            <div className="label-xs text-indigo-400 mb-3">Candidate Snapshot</div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-white/50">Genetic Index</span>
-              <span className="text-xl font-black text-white">97<span className="text-sm text-white/30">/100</span></span>
+          <div style={{ marginTop: 44, padding: '16px 20px', borderRadius: 14, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className="text-label" style={{ color: 'rgba(255,255,255,0.3)', marginBottom: 12 }}>Candidate Preview</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.8125rem', color: 'rgba(255,255,255,0.45)' }}>Starting Genetic Index</span>
+              <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'white', letterSpacing: '-0.03em' }}>
+                --<span style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.25)', fontWeight: 500 }}>/100</span>
+              </span>
             </div>
-            <div className="flex items-center justify-between mt-2">
-              <span className="text-xs text-white/50">Join Date</span>
-              <span className="text-xs font-bold text-indigo-400">Today, 2026</span>
+            <div style={{ fontSize: '0.75rem', color: '#818cf8', marginTop: 6, fontWeight: 500 }}>
+              Syncs automatically after GitHub connect
             </div>
           </div>
         </div>
       </div>
+
+      <style>{`
+        @media (min-width: 900px) {
+          .auth-layout { grid-template-columns: 1fr 1fr !important; }
+          .auth-panel { display: flex !important; }
+        }
+        @media (max-width: 899px) {
+          .auth-panel { display: none !important; }
+          .name-email-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </div>
   );
 }

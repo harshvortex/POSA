@@ -1,310 +1,308 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
-  ShieldCheck, Cpu, Target, Play, ArrowRight, Github,
-  Zap, Sparkles, CheckCircle, Star, TrendingUp, BarChart3,
-  ChevronRight, Users, Lock, Code2
+  ShieldCheck, Cpu, Target, Play, ArrowRight,
+  CheckCircle, Menu, X, Star, Zap, Users, Lock, BarChart3, Sparkles
 } from 'lucide-react';
 
+const FEATURES = [
+  { icon: Cpu, title: 'Deep Repo Analysis', desc: 'Llama-3 scans your entire commit history, architecture decisions, and code patterns to generate an objective technical profile.' },
+  { icon: Play, title: 'Live Technical Viva', desc: 'AI-driven interrogation sessions that probe your real knowledge depth — not what you claim to know, but what you can demonstrate.' },
+  { icon: Target, title: 'Market Fit Score', desc: 'Match your verified profile with roles based on weighted skill alignment, not keyword spam.' },
+  { icon: BarChart3, title: 'Growth Trajectory', desc: 'See how your skills compound over time and know exactly where to invest your effort next.' },
+  { icon: Users, title: 'Recruiter Intelligence', desc: 'Recruiters get deep signal on candidate quality — reasoning behind scores, not just numbers.' },
+  { icon: Lock, title: 'Tamper-Proof Identity', desc: 'Your technical identity is AI-verified. No fake scores, no self-reported inflation.' },
+];
+
+const NAV_LINKS = [
+  { label: 'Features', href: '#features' },
+  { label: 'How it Works', href: '#how' },
+  { label: 'Why PoSA', href: '#why' },
+];
+
 export default function Home() {
+  const [navOpen, setNavOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-[#0f172a] selection:bg-indigo-100 overflow-x-hidden">
-      {/* Gradient bg blobs */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-indigo-100/60 blur-3xl" />
-        <div className="absolute top-1/2 -left-40 w-[500px] h-[500px] rounded-full bg-purple-100/40 blur-3xl" />
+    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0d1117', overflowX: 'hidden' }}>
+
+      {/* Background glow */}
+      <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: '-10%', right: '-5%', width: '50vw', height: '50vw', borderRadius: '50%', background: 'radial-gradient(circle, rgba(79,70,229,0.07) 0%, transparent 70%)' }} />
+        <div style={{ position: 'absolute', bottom: '5%', left: '-5%', width: '40vw', height: '40vw', borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,58,237,0.05) 0%, transparent 70%)' }} />
       </div>
 
-      {/* === NAV === */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? 'bg-white/80 backdrop-blur-2xl border-b border-gray-100 shadow-sm'
-          : 'bg-transparent'
-      }`}>
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-              <ShieldCheck size={16} strokeWidth={2.5} className="text-white" />
+      {/* ── NAV ── */}
+      <header style={{
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+        background: scrolled ? 'rgba(255,255,255,0.92)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(20px)' : 'none',
+        borderBottom: scrolled ? '1px solid #e4e7ec' : '1px solid transparent',
+        transition: 'all 0.3s ease',
+      }}>
+        <div className="container" style={{ display: 'flex', alignItems: 'center', height: 64, justifyContent: 'space-between' }}>
+          {/* Logo */}
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+            <div style={{ width: 32, height: 32, borderRadius: 10, background: 'linear-gradient(135deg, #4f46e5, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(79,70,229,0.3)' }}>
+              <ShieldCheck size={16} color="white" strokeWidth={2.5} />
             </div>
-            <span className="font-bold text-lg tracking-tight">PoSA</span>
-          </div>
+            <span style={{ fontWeight: 800, fontSize: '1.05rem', letterSpacing: '-0.025em', color: '#0d1117' }}>PoSA</span>
+          </Link>
 
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-500">
-            <a href="#features" className="hover:text-gray-900 transition-colors">Features</a>
-            <a href="#how" className="hover:text-gray-900 transition-colors">How It Works</a>
-            <a href="#stats" className="hover:text-gray-900 transition-colors">Why PoSA</a>
-          </div>
+          {/* Desktop Nav */}
+          <nav style={{ display: 'flex', alignItems: 'center', gap: 32 }} className="desktop-nav">
+            {NAV_LINKS.map(l => (
+              <a key={l.label} href={l.href} style={{ fontSize: '0.875rem', fontWeight: 500, color: '#6b7280', textDecoration: 'none', transition: 'color 0.15s' }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#0d1117')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}>
+                {l.label}
+              </a>
+            ))}
+          </nav>
 
-          <div className="flex items-center gap-3">
-            <Link href="/login" className="btn-ghost text-sm px-4 h-9">
+          {/* CTA */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Link href="/login" className="btn btn-outline btn-sm" style={{ display: 'none' }} data-desktop>
               Sign In
             </Link>
-            <Link href="/register" className="btn-primary text-sm px-5 h-9">
-              Get Started <ArrowRight size={14} />
+            <Link href="/login" className="btn btn-ghost btn-sm" style={{ fontSize: '0.8125rem' }}>
+              Sign In
             </Link>
+            <Link href="/register" className="btn btn-primary btn-sm">
+              Get Started <ArrowRight size={13} />
+            </Link>
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setNavOpen(!navOpen)}
+              className="mobile-menu-btn"
+              style={{ display: 'flex', marginLeft: 4 }}
+              aria-label="Menu"
+            >
+              {navOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
           </div>
         </div>
-      </nav>
 
-      {/* === HERO === */}
-      <section className="relative z-10 pt-36 pb-24 max-w-7xl mx-auto px-6 text-center">
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 12 }} transition={{ duration: 0.5 }}>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 mb-8">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
-            <span className="label-xs text-indigo-600">Powered by Llama-3 · Python FastAPI</span>
+        {/* Mobile nav dropdown */}
+        {navOpen && (
+          <div style={{ background: 'white', borderBottom: '1px solid #e4e7ec', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {NAV_LINKS.map(l => (
+              <a key={l.label} href={l.href} onClick={() => setNavOpen(false)}
+                style={{ display: 'block', padding: '10px 12px', borderRadius: 8, fontSize: '0.9rem', fontWeight: 500, color: '#374151', textDecoration: 'none' }}>
+                {l.label}
+              </a>
+            ))}
+            <hr style={{ margin: '8px 0', border: 'none', borderTop: '1px solid #f3f4f6' }} />
+            <Link href="/register" className="btn btn-primary btn-md" style={{ marginTop: 4 }} onClick={() => setNavOpen(false)}>
+              Get Started Free
+            </Link>
           </div>
-        </motion.div>
+        )}
+      </header>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }} transition={{ duration: 0.6, delay: 0.05 }}
-          className="display-xl max-w-4xl mx-auto mb-6"
-        >
-          Your code is your{' '}
-          <span className="gradient-text">résumé.</span>
-        </motion.h1>
+      {/* ── HERO ── */}
+      <section style={{ position: 'relative', zIndex: 1, paddingTop: 120, paddingBottom: 80 }}>
+        <div className="container" style={{ textAlign: 'center' }}>
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <div className="badge badge-blue" style={{ margin: '0 auto 24px', display: 'inline-flex', padding: '6px 14px' }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#4f46e5', display: 'inline-block', animation: 'pulse 2s infinite' }} />
+              Powered by Llama-3 · Python FastAPI
+            </div>
+          </motion.div>
 
-        <motion.p
-          initial={{ opacity: 0, y: 16 }} animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 16 }} transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed"
-        >
-          PoSA ingests your GitHub history through AI to build a tamper-proof
-          technical identity—verified skills, real depth, zero guesswork.
-        </motion.p>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.05 }}
+            className="text-hero" style={{ maxWidth: 780, margin: '0 auto 20px' }}>
+            Your code is your{' '}
+            <span className="gradient-text">résumé.</span>
+          </motion.h1>
 
-        <motion.div
-          initial={{ opacity: 0, y: 12 }} animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 12 }} transition={{ duration: 0.5, delay: 0.15 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
-        >
-          <Link href="/register" className="btn-primary text-base px-8 h-12">
-            <Github size={18} /> Connect GitHub
-          </Link>
-          <Link href="/login" className="btn-ghost text-base px-8 h-12">
-            Recruiter Portal <ChevronRight size={16} />
-          </Link>
-        </motion.div>
+          <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.12 }}
+            className="text-body" style={{ maxWidth: 520, margin: '0 auto 40px', fontSize: '1.0625rem' }}>
+            PoSA uses AI to extract your true technical depth from GitHub and create a verified identity that gets you in front of the right teams.
+          </motion.p>
 
-        {/* Trust bar */}
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: mounted ? 1 : 0 }} transition={{ duration: 0.5, delay: 0.25 }}
-          className="flex flex-wrap items-center justify-center gap-6 text-xs text-gray-400 font-medium"
-        >
-          {['256-bit encrypted', 'Free for candidates', 'No resume needed', 'Recruiter-trusted'].map(t => (
-            <span key={t} className="flex items-center gap-1.5">
-              <CheckCircle size={12} className="text-emerald-500" /> {t}
-            </span>
-          ))}
-        </motion.div>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.18 }}
+            style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center', marginBottom: 56 }}>
+            <Link href="/register" className="btn btn-primary btn-lg">
+              Connect GitHub Free <ArrowRight size={16} />
+            </Link>
+            <Link href="/login" className="btn btn-outline btn-lg">
+              Recruiter Portal
+            </Link>
+          </motion.div>
+
+          {/* Trust signals */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+            style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 24px', justifyContent: 'center' }}>
+            {['No résumé needed', 'Free for developers', 'AI-verified scores', 'Recruiter trusted'].map(t => (
+              <span key={t} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.8125rem', color: '#6b7280', fontWeight: 500 }}>
+                <CheckCircle size={13} color="#10b981" /> {t}
+              </span>
+            ))}
+          </motion.div>
+        </div>
       </section>
 
-      {/* === HERO CARD === */}
-      <section className="relative z-10 max-w-6xl mx-auto px-6 mb-32">
-        <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.97 }}
-          animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 30, scale: mounted ? 1 : 0.97 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="card-hero p-10 noise"
-        >
-          {/* Decorative orbs */}
-          <div className="absolute top-0 right-20 w-64 h-64 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-20 w-48 h-48 rounded-full bg-purple-600/10 blur-3xl pointer-events-none" />
-
-          <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { label: 'Genetic Index', value: '97', suffix: '/100', color: 'text-indigo-400', desc: 'Code Quality Score' },
-              { label: 'Repositories', value: '84', suffix: ' repos', color: 'text-emerald-400', desc: 'Analyzed & Indexed' },
-              { label: 'Market Fit', value: '94%', suffix: '', color: 'text-purple-400', desc: 'Role Alignment Score' },
-            ].map((stat) => (
-              <div key={stat.label} className="p-6 rounded-2xl bg-white/5 border border-white/8 backdrop-blur-sm">
-                <div className="label-xs text-gray-500 mb-3">{stat.label}</div>
-                <div className={`text-5xl font-black tracking-tight ${stat.color} mb-1`}>
-                  {stat.value}<span className="text-xl font-bold text-white/30">{stat.suffix}</span>
-                </div>
-                <div className="text-xs text-white/40 font-medium">{stat.desc}</div>
-              </div>
-            ))}
-          </div>
-
-          <div className="relative z-10 mt-8 p-6 rounded-2xl bg-white/5 border border-white/8">
-            <div className="label-xs text-gray-500 mb-4">Skill DNA — AI-Extracted Profile</div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {/* ── HERO PREVIEW CARD ── */}
+      <section style={{ position: 'relative', zIndex: 1, paddingBottom: 100 }}>
+        <div className="container">
+          <motion.div
+            initial={{ opacity: 0, y: 32, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="card-dark"
+            style={{ padding: 'clamp(24px, 4vw, 48px)' }}
+          >
+            {/* Stats Row */}
+            <div className="grid-3" style={{ marginBottom: 24 }}>
               {[
-                { skill: 'Python', pct: 97 },
-                { skill: 'FastAPI', pct: 92 },
-                { skill: 'LLMs', pct: 89 },
-                { skill: 'System Design', pct: 85 },
-              ].map(({ skill, pct }) => (
-                <div key={skill}>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-xs font-semibold text-white/60">{skill}</span>
-                    <span className="text-xs font-bold text-indigo-400">{pct}%</span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500"
-                      style={{ width: `${pct}%` }}
-                    />
+                { label: 'Genetic Index', val: '97', unit: '/100', color: '#818cf8' },
+                { label: 'Repositories Analyzed', val: '84', unit: ' repos', color: '#34d399' },
+                { label: 'Market Fit Score', val: '94', unit: '%', color: '#c084fc' },
+              ].map(s => (
+                <div key={s.label} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '20px 22px' }}>
+                  <div className="text-label" style={{ color: 'rgba(255,255,255,0.35)', marginBottom: 10 }}>{s.label}</div>
+                  <div style={{ fontSize: 'clamp(2rem, 5vw, 2.75rem)', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1, color: s.color }}>
+                    {s.val}<span style={{ fontSize: '1rem', fontWeight: 500, color: 'rgba(255,255,255,0.25)' }}>{s.unit}</span>
                   </div>
                 </div>
               ))}
             </div>
+
+            {/* Skill DNA */}
+            <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '20px 22px' }}>
+              <div className="text-label" style={{ color: 'rgba(255,255,255,0.3)', marginBottom: 16 }}>Skill DNA — Llama-3 Extracted</div>
+              <div className="grid-2" style={{ gap: '14px 32px' }}>
+                {[{ s: 'Python', p: 97 }, { s: 'FastAPI', p: 92 }, { s: 'LLM Integration', p: 89 }, { s: 'System Design', p: 85 }].map(({ s, p }) => (
+                  <div key={s}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                      <span style={{ fontSize: '0.8125rem', fontWeight: 500, color: 'rgba(255,255,255,0.55)' }}>{s}</span>
+                      <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#818cf8' }}>{p}%</span>
+                    </div>
+                    <div className="skill-bar-track" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                      <div className="skill-bar-fill" style={{ width: `${p}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Badges */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 18 }}>
+              {[
+                { label: '✓ Identity Verified', bg: 'rgba(16,185,129,0.12)', c: '#34d399' },
+                { label: '⚡ Llama-3 Analyzed', bg: 'rgba(99,102,241,0.15)', c: '#818cf8' },
+                { label: '🏆 Top 5% Developer', bg: 'rgba(196,132,252,0.12)', c: '#c084fc' },
+              ].map(b => (
+                <div key={b.label} style={{ padding: '5px 12px', borderRadius: 8, background: b.bg, border: `1px solid ${b.c}30`, fontSize: '0.75rem', fontWeight: 700, color: b.c }}>
+                  {b.label}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── FEATURES ── */}
+      <section id="features" style={{ position: 'relative', zIndex: 1, paddingBottom: 100 }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <div className="text-label-colored" style={{ marginBottom: 12 }}>Platform Features</div>
+            <h2 className="text-h1" style={{ maxWidth: 480, margin: '0 auto 16px' }}>Everything you need to prove your skills.</h2>
+            <p className="text-body" style={{ maxWidth: 420, margin: '0 auto' }}>Built for developers who want to be seen for what they can actually build.</p>
           </div>
-
-          <div className="relative z-10 mt-6 flex items-center gap-3">
-            <div className="px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/25">
-              <span className="text-xs font-bold text-emerald-400">✓ Identity Verified</span>
-            </div>
-            <div className="px-3 py-1.5 rounded-lg bg-indigo-500/15 border border-indigo-500/25">
-              <span className="text-xs font-bold text-indigo-400">⚡ Llama-3 Analyzed</span>
-            </div>
-            <div className="px-3 py-1.5 rounded-lg bg-purple-500/15 border border-purple-500/25">
-              <span className="text-xs font-bold text-purple-400">🏆 Top 3% Developer</span>
-            </div>
+          <div className="grid-3">
+            {FEATURES.map((f, i) => (
+              <motion.div key={f.title}
+                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.07, duration: 0.4 }} viewport={{ once: true }}
+                className="card card-hover" style={{ padding: '28px 28px 32px' }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
+                  <f.icon size={18} color="#4f46e5" />
+                </div>
+                <h3 className="text-h3" style={{ marginBottom: 10 }}>{f.title}</h3>
+                <p className="text-sm" style={{ lineHeight: 1.65 }}>{f.desc}</p>
+              </motion.div>
+            ))}
           </div>
-        </motion.div>
-      </section>
-
-      {/* === FEATURES === */}
-      <section id="features" className="relative z-10 max-w-7xl mx-auto px-6 mb-32">
-        <div className="text-center mb-16">
-          <div className="label-xs text-indigo-500 mb-4">Platform Features</div>
-          <h2 className="display-md max-w-2xl mx-auto">Everything you need to prove your skills.</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            {
-              icon: <Cpu size={20} />, color: 'text-indigo-500 bg-indigo-50',
-              title: 'AI Repository Analysis',
-              desc: 'Llama-3 scans your entire commit history, architecture decisions, and code quality to generate an objective technical profile.'
-            },
-            {
-              icon: <Play size={20} />, color: 'text-purple-500 bg-purple-50',
-              title: 'Live Technical Viva',
-              desc: 'AI-driven interrogation sessions that probe your actual knowledge depth—not just what you claim to know.'
-            },
-            {
-              icon: <Target size={20} />, color: 'text-blue-500 bg-blue-50',
-              title: 'Job Market Fit Score',
-              desc: 'Instantly match your verified profile with thousands of roles based on weighted skill alignment, not keywords.'
-            },
-            {
-              icon: <BarChart3 size={20} />, color: 'text-emerald-500 bg-emerald-50',
-              title: 'Growth Trajectory',
-              desc: 'Track your technical evolution over time. See how your skills compound and where to invest next.'
-            },
-            {
-              icon: <Users size={20} />, color: 'text-rose-500 bg-rose-50',
-              title: 'Recruiter Intelligence',
-              desc: 'Recruiters get deep signal on candidate quality—not just scores, but the reasoning behind them.'
-            },
-            {
-              icon: <Lock size={20} />, color: 'text-slate-500 bg-slate-50',
-              title: 'Tamper-Proof Identity',
-              desc: 'Your technical identity is cryptographically verified. No fake scores, no inflated claims.'
-            },
-          ].map((f) => (
-            <div key={f.title} className="surface surface-hover p-8 group">
-              <div className={`w-10 h-10 rounded-xl ${f.color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform`}>
-                {f.icon}
-              </div>
-              <h3 className="font-bold text-lg mb-2 tracking-tight">{f.title}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
-            </div>
-          ))}
         </div>
       </section>
 
-      {/* === HOW IT WORKS === */}
-      <section id="how" className="relative z-10 max-w-4xl mx-auto px-6 mb-32">
-        <div className="text-center mb-16">
-          <div className="label-xs text-indigo-500 mb-4">The Protocol</div>
-          <h2 className="display-md">From code to career, in 3 steps.</h2>
-        </div>
-
-        <div className="space-y-4">
-          {[
-            {
-              step: '01',
-              title: 'Connect GitHub',
-              desc: 'Link your repositories. Our Python engine pulls your full commit history, languages, architecture patterns, and collaboration signals.'
-            },
-            {
-              step: '02',
-              title: 'Llama-3 Analysis',
-              desc: 'The AI model performs deep code evaluation—assessing logic quality, security awareness, system thinking, and evolution velocity.'
-            },
-            {
-              step: '03',
-              title: 'Verified Identity',
-              desc: 'Receive your Skill DNA profile, take the Live Viva to solidify your identity, and get matched with aligned opportunities.'
-            },
-          ].map((item, i) => (
-            <motion.div
-              key={item.step}
-              initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.1 }} viewport={{ once: true }}
-              className="surface p-8 flex gap-8 items-start group hover:border-indigo-200 transition-all"
-            >
-              <div className="flex-shrink-0 w-12 h-12 rounded-2xl gradient-bg flex items-center justify-center text-white font-black text-sm shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-                {item.step}
-              </div>
-              <div>
-                <h3 className="font-bold text-lg tracking-tight mb-2">{item.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
-              </div>
-            </motion.div>
-          ))}
+      {/* ── HOW IT WORKS ── */}
+      <section id="how" style={{ position: 'relative', zIndex: 1, paddingBottom: 100 }}>
+        <div className="container" style={{ maxWidth: 760 }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <div className="text-label-colored" style={{ marginBottom: 12 }}>3-Step Protocol</div>
+            <h2 className="text-h1">From code to career.</h2>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {[
+              { n: '01', t: 'Connect GitHub', d: 'Link your repositories. Our Python engine pulls your full commit history, language usage, and collaboration signals.' },
+              { n: '02', t: 'AI Analysis', d: 'Llama-3 performs deep code evaluation — logic quality, security awareness, system thinking, and growth velocity.' },
+              { n: '03', t: 'Verified Identity', d: 'Get your Skill DNA profile, take a Live Viva, and get matched with teams looking for exactly your capabilities.' },
+            ].map((step, i) => (
+              <motion.div key={step.n}
+                initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1 }} viewport={{ once: true }}
+                className="card" style={{ padding: '24px 28px', display: 'flex', gap: 20, alignItems: 'flex-start', transition: 'border-color 0.2s' }}
+                onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(79,70,229,0.25)')}
+                onMouseLeave={e => (e.currentTarget.style.borderColor = '#e4e7ec')}>
+                <div style={{ flexShrink: 0, width: 44, height: 44, borderRadius: 12, background: 'linear-gradient(135deg, #4f46e5, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '0.8125rem', boxShadow: '0 4px 12px rgba(79,70,229,0.25)' }}>
+                  {step.n}
+                </div>
+                <div>
+                  <div className="text-h3" style={{ marginBottom: 6 }}>{step.t}</div>
+                  <p className="text-sm">{step.d}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* === CTA BANNER === */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 mb-24">
-        <div className="card-hero noise p-16 text-center">
-          <div className="absolute inset-0 grid-bg opacity-30 rounded-3xl" />
-          <div className="relative z-10">
-            <h2 className="display-lg text-white mb-6 max-w-3xl mx-auto">
-              Stop sending résumés. Start sending proof.
-            </h2>
-            <p className="text-white/50 text-lg mb-10 max-w-xl mx-auto">
-              Join thousands of developers who let their code speak for them.
+      {/* ── CTA ── */}
+      <section style={{ position: 'relative', zIndex: 1, paddingBottom: 120 }}>
+        <div className="container">
+          <div className="card-dark" style={{ padding: 'clamp(40px, 6vw, 80px)', textAlign: 'center' }}>
+            <h2 className="text-h1" style={{ color: 'white', maxWidth: 520, margin: '0 auto 16px' }}>Stop sending résumés. Start sending proof.</h2>
+            <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '1rem', marginBottom: 36, maxWidth: 380, margin: '0 auto 36px' }}>
+              Join developers who let their code speak for itself.
             </p>
-            <Link href="/register" className="btn-primary text-base px-10 h-12 inline-flex">
-              Start Free <ArrowRight size={16} />
+            <Link href="/register" className="btn btn-primary btn-xl">
+              Create Free Profile <ArrowRight size={17} />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* === FOOTER === */}
-      <footer className="relative z-10 border-t border-gray-100 bg-white/50 py-12">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-              <ShieldCheck size={12} className="text-white" strokeWidth={2.5} />
+      {/* ── FOOTER ── */}
+      <footer style={{ borderTop: '1px solid #e4e7ec', background: 'white', padding: '32px 0' }}>
+        <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center', textAlign: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 24, height: 24, borderRadius: 7, background: 'linear-gradient(135deg, #4f46e5, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <ShieldCheck size={12} color="white" strokeWidth={2.5} />
             </div>
-            <span className="font-bold text-sm">PoSA</span>
+            <span style={{ fontWeight: 700, fontSize: '0.9rem', letterSpacing: '-0.015em' }}>PoSA</span>
           </div>
-          <p className="label-xs text-gray-400">© 2026 Proof of Skills Authority · Python + Next.js</p>
-          <div className="flex gap-6">
-            {['Privacy', 'Terms', 'Docs'].map(l => (
-              <a key={l} href="#" className="label-xs text-gray-400 hover:text-gray-700 transition-colors">{l}</a>
-            ))}
-          </div>
+          <p className="text-xs">© 2026 Proof of Skills Authority · Built with Python + Next.js</p>
         </div>
       </footer>
+
+      <style>{`
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        @media(min-width:768px) { .desktop-nav { display: flex !important; } }
+        @media(max-width:767px) { .desktop-nav { display: none !important; } }
+      `}</style>
     </div>
   );
 }
